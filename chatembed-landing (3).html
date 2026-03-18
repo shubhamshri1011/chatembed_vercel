@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatEmbed — AI Chatbot in 10 Minutes</title>
+<meta name="description" content="Add a fully branded AI chatbot to any website in under 10 minutes. No coding required. White-label ready.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── RESET & BASE ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #0A0E1A;
+    --surface:  #111827;
+    --surface2: #1a2235;
+    --brand:    #4F8EF7;
+    --brand2:   #38E2B0;
+    --text:     #F0F4FF;
+    --muted:    #8896B0;
+    --border:   rgba(255,255,255,0.08);
+    --card:     rgba(255,255,255,0.04);
+
+    /* ── REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT URL ── */
+    --gs-url: 'https://script.google.com/macros/s/AKfycbxynqJrLdv3H3sOhedv7-kKrw68FNb6kJsLgK47N0w8nD1GuzQEqjq9arx7-vAd1bbs8g/exec';
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  a { text-decoration: none; color: inherit; }
+  img { max-width: 100%; }
+
+  /* ── UTILITY ──────────────────────────────────────────── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+  .section   { padding: 6rem 1.5rem; }
+  .text-muted  { color: var(--muted); }
+  .text-brand  { color: var(--brand); }
+  .text-brand2 { color: var(--brand2); }
+
+  /* ── NAVBAR ───────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,14,26,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.3rem;
+  }
+  .nav-logo span { color: var(--brand); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--muted); font-size: .9rem;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--brand); color: #fff;
+    border: none; padding: .55rem 1.3rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; font-weight: 500;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .nav-cta:hover { opacity: .85; }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 8rem 1.5rem 5rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(79,142,247,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,142,247,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-glow {
+    position: absolute; top: 10%; left: 50%;
+    transform: translateX(-50%);
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, rgba(79,142,247,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center; width: 100%;
+    position: relative; z-index: 1;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: rgba(79,142,247,0.10);
+    border: 1px solid rgba(79,142,247,0.25);
+    padding: .35rem 1rem; border-radius: 100px;
+    font-size: .8rem; color: var(--brand);
+    margin-bottom: 1.5rem;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--brand2); border-radius: 50%;
+    animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 3.4rem;
+    line-height: 1.1; margin-bottom: 1.5rem;
+  }
+  h1 .accent {
+    background: linear-gradient(135deg, var(--brand), var(--brand2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: 1.1rem; color: var(--muted);
+    line-height: 1.7; margin-bottom: 2.5rem;
+    max-width: 480px;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--brand); color: #fff;
+    border: none; padding: .9rem 1.9rem;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 500;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-primary:hover { background: #6FA3FF; transform: translateY(-2px); }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border);
+    padding: .9rem 1.9rem; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; cursor: pointer; transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
+  .hero-stats {
+    display: flex; gap: 2.5rem; margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem; font-weight: 700;
+    display: block;
+  }
+  .stat-lbl { font-size: .8rem; color: var(--muted); }
+
+  /* ── DEMO CHAT WIDGET ─────────────────────────────────── */
+  .demo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  }
+  .demo-header {
+    background: var(--surface2);
+    padding: 1rem 1.25rem;
+    display: flex; align-items: center; gap: .75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .demo-av {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--brand), var(--brand2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+  }
+  .demo-name { font-weight: 500; font-size: .9rem; }
+  .demo-status {
+    font-size: .72rem; color: var(--brand2);
+    display: flex; align-items: center; gap: .3rem;
+  }
+  .online { width: 5px; height: 5px; background: var(--brand2); border-radius: 50%; }
+  .demo-msgs {
+    padding: 1rem; height: 260px;
+    overflow-y: auto; display: flex;
+    flex-direction: column; gap: .65rem;
+    background: #0f1623;
+  }
+  .demo-msgs::-webkit-scrollbar { width: 3px; }
+  .demo-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .msg {
+    max-width: 80%; padding: .6rem .9rem;
+    border-radius: 12px;
+    font-size: .85rem; line-height: 1.5;
+    animation: fadeUp .25s ease;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
+  .msg.bot {
+    background: var(--surface2); color: var(--text);
+    align-self: flex-start; border-bottom-left-radius: 3px;
+  }
+  .msg.user {
+    background: var(--brand); color: #fff;
+    align-self: flex-end; border-bottom-right-radius: 3px;
+  }
+  .typing {
+    display: flex; gap: 4px; padding: .6rem .9rem;
+    background: var(--surface2); border-radius: 12px;
+    border-bottom-left-radius: 3px; align-self: flex-start;
+    width: 52px;
+  }
+  .typing span {
+    width: 6px; height: 6px;
+    background: var(--muted); border-radius: 50%;
+    animation: td .9s infinite;
+  }
+  .typing span:nth-child(2){animation-delay:.15s}
+  .typing span:nth-child(3){animation-delay:.3s}
+  @keyframes td{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  .demo-input-row {
+    padding: .85rem; display: flex; gap: .65rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .demo-input-row input {
+    flex: 1; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: .6rem .9rem; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: .88rem;
+    outline: none; transition: border-color .15s;
+  }
+  .demo-input-row input:focus { border-color: var(--brand); }
+  .demo-input-row input::placeholder { color: var(--muted); }
+  .send-btn {
+    background: var(--brand); border: none;
+    border-radius: 8px; width: 36px; height: 36px;
+    cursor: pointer; display: flex; align-items: center;
+    justify-content: center; transition: opacity .2s;
+    flex-shrink: 0;
+  }
+  .send-btn:hover { opacity: .8; }
+
+  /* ── LOGOS BAR ────────────────────────────────────────── */
+  .logos-bar {
+    padding: 2.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .logos-bar p { text-align: center; font-size: .82rem; color: var(--muted); margin-bottom: 1.25rem; }
+  .logo-strip {
+    display: flex; justify-content: center;
+    align-items: center; gap: 3rem; flex-wrap: wrap;
+    opacity: .35;
+  }
+  .logo-strip span {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700;
+  }
+
+  /* ── SECTION LABELS ───────────────────────────────────── */
+  .sec-tag {
+    font-size: .78rem; color: var(--brand);
+    font-weight: 500; text-transform: uppercase;
+    letter-spacing: .1em; margin-bottom: .85rem;
+  }
+  .sec-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem; font-weight: 800;
+    line-height: 1.15; margin-bottom: 1rem;
+  }
+  .sec-sub {
+    color: var(--muted); font-size: 1.05rem;
+    max-width: 560px; line-height: 1.7;
+  }
+
+  /* ── HOW IT WORKS ─────────────────────────────────────── */
+  .steps {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1.5rem; margin-top: 3.5rem;
+  }
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.75rem;
+  }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem; font-weight: 800;
+    color: rgba(79,142,247,0.2); line-height: 1;
+    margin-bottom: .75rem;
+  }
+  .step-emoji { font-size: 1.5rem; margin-bottom: .75rem; }
+  .step-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem; font-weight: 700;
+    margin-bottom: .5rem;
+  }
+  .step-card p { color: var(--muted); font-size: .88rem; line-height: 1.6; }
+  .code-snippet {
+    background: #0D1117;
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem 1.5rem;
+    margin-top: 2rem; position: relative;
+  }
+  .code-snippet pre {
+    font-family: 'Courier New', monospace;
+    font-size: .85rem; line-height: 1.65;
+  }
+  .c-green  { color: #7EE787; }
+  .c-blue   { color: #79C0FF; }
+  .c-orange { color: #FFA657; }
+  .copy-code-btn {
+    position: absolute; bottom: .75rem; right: 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted); padding: .28rem .7rem;
+    border-radius: 6px; font-size: .73rem;
+    cursor: pointer; transition: all .2s;
+  }
+  .copy-code-btn:hover { color: var(--text); border-color: var(--brand); }
+
+  /* ── FEATURES ─────────────────────────────────────────── */
+  .features-section { padding: 2rem 1.5rem 6rem; }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1.5rem; margin-top: 3.5rem;
+  }
+  .feat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.75rem;
+    transition: border-color .2s;
+  }
+  .feat-card:hover { border-color: rgba(79,142,247,0.3); }
+  .feat-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center;
+    justify-content: center; font-size: 1.2rem;
+    margin-bottom: 1.1rem;
+  }
+  .feat-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    margin-bottom: .5rem;
+  }
+  .feat-card p { color: var(--muted); font-size: .875rem; line-height: 1.6; }
+
+  /* ── PRICING ──────────────────────────────────────────── */
+  .pricing-section {
+    padding: 6rem 1.5rem;
+    background: var(--surface);
+  }
+  .plans {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1.5rem; margin-top: 3.5rem;
+    max-width: 960px; margin-left: auto; margin-right: auto;
+  }
+  .plan {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+    position: relative; transition: border-color .2s;
+  }
+  .plan.popular { border-color: var(--brand); background: rgba(79,142,247,0.04); }
+  .popular-tag {
+    position: absolute; top: -13px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--brand); color: #fff;
+    font-size: .72rem; font-weight: 500;
+    padding: .22rem .85rem; border-radius: 100px;
+    white-space: nowrap;
+  }
+  .plan-name {
+    font-family: 'Syne', sans-serif;
+    font-size: .85rem; font-weight: 700;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: .08em; margin-bottom: .75rem;
+  }
+  .plan-price { display: flex; align-items: baseline; gap: .3rem; margin-bottom: .2rem; }
+  .plan-amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem; font-weight: 800;
+  }
+  .plan-period { color: var(--muted); font-size: .9rem; }
+  .plan-convos {
+    font-size: .82rem; color: var(--muted);
+    padding-bottom: 1.25rem; margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .plan-feats { display: flex; flex-direction: column; gap: .65rem; margin-bottom: 1.75rem; }
+  .pf {
+    font-size: .85rem; display: flex;
+    align-items: flex-start; gap: .5rem;
+  }
+  .pf .ck { color: var(--brand2); flex-shrink: 0; }
+  .pf.dim  { color: var(--muted); }
+  .pf.dim .ck { color: var(--border); }
+  .plan-btn {
+    width: 100%; padding: .8rem;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .92rem; font-weight: 500;
+    cursor: pointer; transition: all .2s;
+  }
+  .plan-btn.outline {
+    background: transparent;
+    border: 1px solid var(--border); color: var(--text);
+  }
+  .plan-btn.outline:hover { border-color: var(--brand); color: var(--brand); }
+  .plan-btn.filled {
+    background: var(--brand); border: none; color: #fff;
+  }
+  .plan-btn.filled:hover { background: #6FA3FF; }
+
+  /* ── WAITLIST SECTION ─────────────────────────────────── */
+  .waitlist-section { padding: 6rem 1.5rem; }
+  .wl-inner { max-width: 600px; margin: 0 auto; text-align: center; }
+  .wl-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 2.5rem 2rem;
+    margin-top: 2.5rem; text-align: left;
+  }
+  .wl-card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1.2rem;
+    margin-bottom: .2rem;
+  }
+  .wl-card-sub { color: var(--muted); font-size: .87rem; margin-bottom: 1.5rem; }
+  .wl-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: .75rem; }
+  .wl-input {
+    width: 100%; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: .82rem 1rem; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: .9rem;
+    outline: none; transition: border-color .15s;
+    appearance: none;
+  }
+  .wl-input:focus  { border-color: var(--brand); }
+  .wl-input::placeholder { color: var(--muted); }
+  .wl-mb { margin-bottom: .75rem; }
+  .wl-submit {
+    width: 100%; padding: 1rem;
+    background: linear-gradient(135deg, var(--brand), #6A5AFF);
+    color: #fff; border: none; border-radius: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: .98rem; font-weight: 700;
+    cursor: pointer; transition: all .2s; letter-spacing: .02em;
+    margin-top: .1rem;
+  }
+  .wl-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,142,247,0.3); }
+  .wl-submit:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+  .wl-note { text-align: center; font-size: .75rem; color: var(--muted); margin-top: .75rem; }
+  .wl-status { min-height: 20px; text-align: center; font-size: .82rem; margin-top: .5rem; }
+
+  /* SUCCESS STATE */
+  .wl-success { display: none; text-align: center; padding: 1.5rem .5rem; }
+  .wl-success .s-emoji { font-size: 3rem; margin-bottom: 1.1rem; display: block; }
+  .wl-success h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.5rem; margin-bottom: .75rem;
+  }
+  .wl-success p { color: var(--muted); font-size: .92rem; line-height: 1.7; margin-bottom: 0; max-width: 420px; margin: 0 auto; }
+  .wl-confirm {
+    background: rgba(56,226,176,0.06);
+    border: 1px solid rgba(56,226,176,0.2);
+    border-radius: 10px; padding: .85rem 1rem;
+  }
+  .wl-confirm-row {
+    display: flex; justify-content: space-between;
+    font-size: .8rem; padding: .28rem 0;
+    border-bottom: 1px solid rgba(56,226,176,0.08);
+  }
+  .wl-confirm-row:last-child { border-bottom: none; }
+  .wl-confirm-row span:first-child { color: var(--muted); }
+  .wl-confirm-row span:last-child  { color: var(--brand2); font-weight: 500; }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  footer {
+    padding: 2rem 2rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 1rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
+  .footer-logo span { color: var(--brand); }
+  footer p { font-size: .82rem; color: var(--muted); }
+
+  /* ── RESPONSIVE ───────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .hero-inner    { grid-template-columns: 1fr; gap: 2.5rem; }
+    .steps         { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .plans         { grid-template-columns: 1fr; }
+    h1             { font-size: 2.4rem; }
+    .sec-title     { font-size: 2rem; }
+    .nav-links     { display: none; }
+  }
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .wl-row        { grid-template-columns: 1fr; }
+    .hero-stats    { gap: 1.25rem; }
+    footer         { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">Chat<span>Embed</span></div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#waitlist">Early Access</a>
+  </div>
+  <button class="nav-cta" onclick="goTo('waitlist')">Join Waitlist →</button>
+</nav>
+
+<!-- ══ HERO ════════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+
+    <!-- LEFT: Copy -->
+    <div>
+      <div class="hero-badge">
+        <div class="badge-dot"></div>
+        Now in Early Access — 47 spots left
+      </div>
+      <h1>Your AI chatbot.<br>Live in <span class="accent">10 minutes.</span></h1>
+      <p class="hero-sub">Paste two lines of code. Get a branded AI chatbot answering questions, capturing leads, and converting visitors — 24/7 on autopilot.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="goTo('waitlist')">Get Early Access — Free</button>
+        <button class="btn-ghost"   onclick="goTo('how')">See How It Works ↓</button>
+      </div>
+      <div class="hero-stats">
+        <div><span class="stat-num">10 min</span><span class="stat-lbl">Average setup time</span></div>
+        <div><span class="stat-num">100%</span><span class="stat-lbl">White-labeled</span></div>
+        <div><span class="stat-num">24/7</span><span class="stat-lbl">Always online</span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Live demo chat -->
+    <div>
+      <div class="demo-card">
+        <div class="demo-header">
+          <div class="demo-av">💬</div>
+          <div>
+            <div class="demo-name">Aria — AI Assistant</div>
+            <div class="demo-status"><div class="online"></div> Online now</div>
+          </div>
+        </div>
+        <div class="demo-msgs" id="demoMsgs">
+          <div class="msg bot">Hi! 👋 I'm Aria. Ask me anything about pricing, setup, or features!</div>
+        </div>
+        <div class="demo-input-row">
+          <input type="text" id="demoInput" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')demoSend()">
+          <button class="send-btn" onclick="demoSend()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ LOGOS ════════════════════════════════════════════════ -->
+<div class="logos-bar">
+  <p>Works on every platform — no developer needed</p>
+  <div class="logo-strip">
+    <span>Shopify</span><span>WordPress</span><span>Webflow</span>
+    <span>Wix</span><span>Framer</span><span>React</span>
+  </div>
+</div>
+
+<!-- ══ HOW IT WORKS ═════════════════════════════════════════ -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="sec-tag">How it works</div>
+    <h2 class="sec-title">From signup to live<br>in under 10 minutes.</h2>
+    <p class="sec-sub">No developers. No complex setup. No waiting weeks. Just a working AI chatbot on your site — today.</p>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-emoji">🏢</div>
+        <h3>Tell us about your business</h3>
+        <p>Paste your website URL. Our AI auto-reads and trains the chatbot on your content in under 2 minutes.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-emoji">🎨</div>
+        <h3>Brand it as your own</h3>
+        <p>Upload your logo, pick colors, name your bot. 100% native to your website — no ChatEmbed branding.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-emoji">⚡</div>
+        <h3>Paste 2 lines and go live</h3>
+        <p>Copy the embed snippet and paste it into any website or CMS. Your chatbot is live instantly.</p>
+      </div>
+    </div>
+
+    <div class="code-snippet">
+      <span style="position:absolute;top:.75rem;right:1rem;font-size:.72rem;color:var(--muted)">HTML</span>
+      <pre><span class="c-green">&lt;script</span> <span class="c-blue">src</span>=<span class="c-orange">"https://cdn.chatembed.io/widget.js"</span>
+        <span class="c-blue">data-bot-id</span>=<span class="c-orange">"YOUR_BOT_ID"</span><span class="c-green">&gt;&lt;/script&gt;</span></pre>
+      <button class="copy-code-btn" onclick="copySnippet(this)">Copy</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ═════════════════════════════════════════════ -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="sec-tag">Features</div>
+    <h2 class="sec-title">Everything you need.<br>Nothing you don't.</h2>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(79,142,247,0.1)">🧠</div>
+        <h3>Auto-Training from URL</h3>
+        <p>Paste your website URL and AI reads, crawls, and learns your entire knowledge base automatically.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(56,226,176,0.1)">🎨</div>
+        <h3>100% White-Label</h3>
+        <p>Full brand control — your logo, colors, custom domain, zero mention of ChatEmbed anywhere.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(255,166,87,0.1)">🎯</div>
+        <h3>Lead Capture Built-In</h3>
+        <p>Automatically ask visitors for their email at the right moment. Leads flow into your CRM.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(167,86,255,0.1)">📊</div>
+        <h3>Analytics Dashboard</h3>
+        <p>See what visitors ask, which questions go unanswered, and your lead conversion rate.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(79,142,247,0.1)">🔗</div>
+        <h3>CRM Integrations</h3>
+        <p>Native integrations with HubSpot, Salesforce, Zapier, and Webhooks for seamless lead flow.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(56,226,176,0.1)">🏢</div>
+        <h3>Agency Reseller Portal</h3>
+        <p>Manage unlimited client chatbots. White-label the dashboard. Bill clients at your own markup.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRICING ══════════════════════════════════════════════ -->
+<section class="pricing-section" id="pricing">
+  <div class="container" style="text-align:center">
+    <div class="sec-tag" style="display:inline-block">Pricing</div>
+    <h2 class="sec-title">Pay for what you use.</h2>
+    <p class="sec-sub" style="margin:0 auto">Conversation-based pricing. No bloated seat fees. Scale up as your chatbot gets busier.</p>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price"><span class="plan-amount">$29</span><span class="plan-period">/mo</span></div>
+        <div class="plan-convos">500 conversations · 1 website</div>
+        <div class="plan-feats">
+          <div class="pf"><span class="ck">✓</span> AI-powered chatbot</div>
+          <div class="pf"><span class="ck">✓</span> Custom branding</div>
+          <div class="pf"><span class="ck">✓</span> URL auto-training</div>
+          <div class="pf"><span class="ck">✓</span> Basic analytics</div>
+          <div class="pf dim"><span class="ck">—</span> Lead capture</div>
+          <div class="pf dim"><span class="ck">—</span> CRM integrations</div>
+        </div>
+        <button class="plan-btn outline" onclick="goTo('waitlist')">Get Early Access</button>
+      </div>
+
+      <div class="plan popular">
+        <div class="popular-tag">Most Popular</div>
+        <div class="plan-name">Growth</div>
+        <div class="plan-price"><span class="plan-amount">$99</span><span class="plan-period">/mo</span></div>
+        <div class="plan-convos">2,500 conversations · 3 websites</div>
+        <div class="plan-feats">
+          <div class="pf"><span class="ck">✓</span> Everything in Starter</div>
+          <div class="pf"><span class="ck">✓</span> Remove all branding</div>
+          <div class="pf"><span class="ck">✓</span> Lead capture + export</div>
+          <div class="pf"><span class="ck">✓</span> HubSpot + Zapier</div>
+          <div class="pf"><span class="ck">✓</span> Priority support</div>
+          <div class="pf dim"><span class="ck">—</span> Agency dashboard</div>
+        </div>
+        <button class="plan-btn filled" onclick="goTo('waitlist')">Get Early Access</button>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name">Scale</div>
+        <div class="plan-price"><span class="plan-amount">$299</span><span class="plan-period">/mo</span></div>
+        <div class="plan-convos">10,000 conversations · 10 websites</div>
+        <div class="plan-feats">
+          <div class="pf"><span class="ck">✓</span> Everything in Growth</div>
+          <div class="pf"><span class="ck">✓</span> Agency reseller portal</div>
+          <div class="pf"><span class="ck">✓</span> Custom domain dashboard</div>
+          <div class="pf"><span class="ck">✓</span> API access</div>
+          <div class="pf"><span class="ck">✓</span> Custom AI training</div>
+          <div class="pf"><span class="ck">✓</span> Dedicated success manager</div>
+        </div>
+        <button class="plan-btn outline" onclick="goTo('waitlist')">Get Early Access</button>
+      </div>
+    </div>
+
+    <p style="margin-top:1.5rem;font-size:.83rem;color:var(--muted)">
+      Early access members get <strong style="color:var(--brand2)">40% off</strong> their first 3 months. No credit card required to join.
+    </p>
+  </div>
+</section>
+
+<!-- ══ WAITLIST ═════════════════════════════════════════════ -->
+<section class="waitlist-section" id="waitlist">
+  <div class="wl-inner">
+    <div class="sec-tag" style="display:inline-block">Early Access</div>
+    <h2 class="sec-title">Be first in line.<br>Get 40% off launch price.</h2>
+    <p class="sec-sub" style="margin:0 auto">Join 200+ businesses already on the waitlist. Early members get priority onboarding and a locked-in discount forever.</p>
+
+    <div class="wl-card">
+      <!-- FORM VIEW -->
+      <div id="wlFormView">
+        <div class="wl-card-title">Reserve your spot 🚀</div>
+        <div class="wl-card-sub">Takes 30 seconds. No credit card needed.</div>
+
+        <div class="wl-row">
+          <input class="wl-input" type="text"  id="wl_name"  placeholder="Your name">
+          <input class="wl-input" type="text"  id="wl_biz"   placeholder="Business name">
+        </div>
+        <input  class="wl-input wl-mb" type="email" id="wl_email" placeholder="Work email address">
+        <select class="wl-input wl-mb" id="wl_plan">
+          <option value="">Which plan interests you?</option>
+          <option value="Starter — $29/mo">Starter — $29/mo</option>
+          <option value="Growth — $99/mo">Growth — $99/mo</option>
+          <option value="Scale — $299/mo">Scale — $299/mo</option>
+          <option value="Enterprise — Custom">Enterprise — Custom</option>
+        </select>
+
+        <button class="wl-submit" id="wlBtn" onclick="submitWaitlist()">
+          Join Waitlist — Get 40% Off →
+        </button>
+        <div class="wl-status" id="wlStatus"></div>
+        <p class="wl-note">🔒 No spam. Unsubscribe anytime. We'll only email you about launch updates.</p>
+      </div>
+
+      <!-- SUCCESS VIEW -->
+      <div class="wl-success" id="wlSuccess">
+        <span class="s-emoji">🎉</span>
+        <h3>You're on the list!</h3>
+        <p id="wlSuccessMsg">We'll email you as soon as we're ready to onboard you. You've locked in your 40% early access discount.</p>
+        <p style="margin-top:1.5rem;font-size:.78rem;color:var(--muted)">Share with a friend and move up the queue ↗</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">Chat<span>Embed</span></div>
+  <p>© 2026 ChatEmbed. Built to make AI accessible for every business.</p>
+  <p style="font-size:.75rem">privacy · terms · contact</p>
+</footer>
+
+
+<!-- ══ JAVASCRIPT ═══════════════════════════════════════════ -->
+<script>
+  /* ── GOOGLE SHEETS ENDPOINT ───────────────────────────── */
+  /* 👇 YAHAN APNA APPS SCRIPT URL HAI — change mat karo */
+  const GS_URL = 'https://script.google.com/macros/s/AKfycbxynqJrLdv3H3sOhedv7-kKrw68FNb6kJsLgK47N0w8nD1GuzQEqjq9arx7-vAd1bbs8g/exec';
+
+  /* ── SMOOTH SCROLL ────────────────────────────────────── */
+  function goTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* ── COPY SNIPPET ─────────────────────────────────────── */
+  function copySnippet(btn) {
+    navigator.clipboard.writeText(
+      '<script src="https://cdn.chatembed.io/widget.js" data-bot-id="YOUR_BOT_ID"><\/script>'
+    ).catch(() => {});
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  }
+
+  /* ── DEMO CHATBOT ─────────────────────────────────────── */
+  const DEMO_REPLIES = {
+    'pricing' : 'Plans start at $29/mo (500 convos). Growth is $99/mo and Scale is $299/mo. Early access members get 40% off! 🎉',
+    'price'   : 'Plans start at $29/month. Early access members get 40% off the first 3 months!',
+    'setup'   : 'Setup takes under 10 minutes! Paste your URL → AI trains automatically → Customize branding → Copy 2 lines of code. Done! ⚡',
+    'how'     : 'It\'s super simple: 1) Paste your website URL. 2) We train the AI on your content. 3) Customize your bot. 4) Paste 2 lines on your site. Live in 10 min!',
+    'white'   : 'Yes, 100% white-labeled on Growth and Scale plans. Your logo, colors, domain — visitors never see "ChatEmbed" anywhere.',
+    'agency'  : 'Our Scale plan includes an Agency Portal — manage unlimited client bots, white-label the dashboard, and bill clients at your own markup.',
+    'free'    : 'We offer a free trial! Early access members also get 40% off their first 3 months. Join the waitlist to claim it.',
+    'wordpress':'Yes! Works on WordPress, Shopify, Webflow, Wix, Framer, React, and any HTML site. Just paste the 2-line snippet.',
+    'shopify' : 'Absolutely! ChatEmbed works perfectly on Shopify stores. A dedicated Shopify App is coming soon too!',
+    'integrat': 'We integrate with HubSpot, Salesforce, Zoho, Pipedrive, and Zapier. Webhook support is also available.',
+    'lead'    : 'Lead capture is built right in! The bot automatically asks for email after a few messages. Leads push directly to your CRM.',
+  };
+  function demoSend() {
+    const inp = document.getElementById('demoInput');
+    const txt = inp.value.trim();
+    if (!txt) return;
+    inp.value = '';
+    addMsg(txt, 'user');
+    showTyping();
+    setTimeout(() => {
+      removeTyping();
+      const key = Object.keys(DEMO_REPLIES).find(k => txt.toLowerCase().includes(k));
+      addMsg(key ? DEMO_REPLIES[key] :
+        'Great question! ChatEmbed can handle that for your business. Want to know about pricing, setup, or features?',
+        'bot'
+      );
+    }, 700 + Math.random() * 500);
+  }
+  function addMsg(text, type) {
+    const wrap = document.getElementById('demoMsgs');
+    const d = document.createElement('div');
+    d.className = 'msg ' + type;
+    d.textContent = text;
+    wrap.appendChild(d);
+    wrap.scrollTop = wrap.scrollHeight;
+  }
+  function showTyping() {
+    const wrap = document.getElementById('demoMsgs');
+    const d = document.createElement('div');
+    d.className = 'typing'; d.id = 'demoTyping';
+    d.innerHTML = '<span></span><span></span><span></span>';
+    wrap.appendChild(d);
+    wrap.scrollTop = wrap.scrollHeight;
+  }
+  function removeTyping() {
+    const el = document.getElementById('demoTyping');
+    if (el) el.remove();
+  }
+
+  /* ── WAITLIST SUBMIT ──────────────────────────────────── */
+  async function submitWaitlist() {
+    const name  = document.getElementById('wl_name').value.trim();
+    const biz   = document.getElementById('wl_biz').value.trim();
+    const email = document.getElementById('wl_email').value.trim();
+    const plan  = document.getElementById('wl_plan').value;
+    const btn   = document.getElementById('wlBtn');
+    const status= document.getElementById('wlStatus');
+
+    /* Validation */
+    if (!name)              { flashStatus('⚠️ Apna naam daalo', 'orange'); return; }
+    if (!biz)               { flashStatus('⚠️ Business name daalo', 'orange'); return; }
+    if (!email || !email.includes('@')) { flashStatus('⚠️ Valid email daalo', 'orange'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    flashStatus('Google Sheet mein save ho raha hai...', '#8896B0');
+
+    /* Send to Google Sheets using Image pixel trick (avoids CORS) */
+    try {
+      const params = new URLSearchParams({
+        name,
+        business : biz,
+        email,
+        plan     : plan || 'Not selected',
+        source   : 'landing-page',
+        timestamp: new Date().toLocaleString('en-IN')
+      });
+
+      /* Show success screen first */
+      document.getElementById('wlSuccessMsg').textContent =
+        `Hey ${name}! We'll email you as soon as we're ready to onboard you. You've locked in your 40% early access discount.`;
+
+      document.getElementById('wlFormView').style.display = 'none';
+      document.getElementById('wlSuccess').style.display  = 'block';
+
+      /* Pixel trick — fires GET to Google Sheets (no CORS block) */
+      const img = new Image();
+      img.src = GS_URL + '?' + params.toString();
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Join Waitlist — Get 40% Off →';
+      flashStatus('❌ Error aaya. Dobara try karo.', '#F87171');
+    }
+  }
+
+  function flashStatus(msg, color) {
+    const el = document.getElementById('wlStatus');
+    el.style.color = color;
+    el.textContent = msg;
+    setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 4000);
+  }
+</script>
+
+</body>
+</html>
