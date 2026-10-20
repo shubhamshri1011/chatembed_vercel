@@ -1,0 +1,1856 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://embedease.in/">
+<title>EmbedEase — Growth & Marketing Platform for Indian Businesses</title>
+  <meta name="description"
+    content="AI Chatbot, WhatsApp campaigns, performance marketing, and creative production. We track the cost of every lead and every rupee spent. Not an agency — your building partners.">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="EmbedEase — Marketing That Shows You the Cost of Every Lead">
+  <meta property="og:description"
+    content="One-stop growth & marketing platform: Chatbots, WhatsApp campaigns, Meta/Google ads, and full CPL/ROAS tracking.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://embedease.in">
+
+  <!-- Editorial Typography: Fraunces + DM Sans -->
+  <meta property="og:image" content="https://embedease.in/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://embedease.in/assets/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta property="og:image" content="https://embedease.in/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://embedease.in/assets/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&display=swap"
+    rel="stylesheet">
+
+  <!-- Pinned Lucide Icons & Shared Unified Theme -->
+  <link rel="stylesheet" href="/assets/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  <script src="/assets/theme.js" defer></script>
+
+  <style>
+    /* ── BASE & DESIGN SYSTEM ────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #F6F4EF;
+      /* Warm Ivory */
+      --ink: #0F1210;
+      /* Solid Deep Ink */
+      --accent: #0E6B4D;
+      /* Confident Deep Green */
+      --accent-soft: rgba(14, 107, 77, 0.08);
+      --accent-hover: #09523a;
+      --amber: #E0A526;
+      /* Warm Amber for numbers/badges */
+      --muted: #5A625D;
+      /* Editorial Muted Slate */
+      --border: rgba(15, 18, 16, 0.1);
+      --card-bg: #FFFFFF;
+      --dark-sec: #0F1210;
+      --dark-card: #181D1A;
+      --dark-border: rgba(255, 255, 255, 0.08);
+      --dark-muted: #8F9994;
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .section {
+      padding: 6.5rem 0;
+    }
+
+    .section-dark {
+      background: var(--dark-sec);
+      color: #F6F4EF;
+    }
+
+    .serif {
+      font-family: var(--font-serif);
+      font-weight: 500;
+    }
+
+    .t-num {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── SLIM EDITORIAL NAV ──────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(246, 244, 239, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      transition: all 0.25s ease;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 1.45rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--ink);
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--ink);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(15, 18, 16, 0.04);
+      border-color: var(--ink);
+    }
+
+    .btn-amber {
+      background: var(--amber);
+      color: #0F1210;
+    }
+
+    .btn-amber:hover {
+      background: #c8911d;
+    }
+
+    /* ── HERO SECTION ────────────────────────────────────────── */
+    .hero {
+      padding: 5rem 0 4rem;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 3.5rem;
+      align-items: center;
+    }
+
+    .pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(14, 107, 77, 0.2);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: 3.4rem;
+      line-height: 1.08;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 540px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .hero-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hero-note svg {
+      color: var(--accent);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Product UI Mock */
+    .hero-mock {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 20px 48px -12px rgba(15, 18, 16, 0.08);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mock-topbar {
+      padding: 0.85rem 1.15rem;
+      background: #FAF8F5;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mock-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mock-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #D6D2CA;
+    }
+
+    .mock-dot:nth-child(1) {
+      background: #FF5F56;
+    }
+
+    .mock-dot:nth-child(2) {
+      background: #FFBD2E;
+    }
+
+    .mock-dot:nth-child(3) {
+      background: #27C93F;
+    }
+
+    .mock-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.15rem 0.55rem;
+      border-radius: 4px;
+    }
+
+    .mock-body {
+      padding: 1.25rem;
+    }
+
+    .mock-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .mock-stat {
+      background: #FAF8F5;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem;
+    }
+
+    .mock-stat-lbl {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .mock-stat-val {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 0.15rem;
+    }
+
+    .mock-stat-sub {
+      font-size: 0.7rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin-top: 0.2rem;
+    }
+
+    .mock-lead-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .mock-lead-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mock-av {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .mock-ch-pill {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.12rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(24, 119, 242, 0.12);
+      color: #1877F2;
+    }
+
+    /* ── TWO-ROW INFINITE LOGO MARQUEE ───────────────────────── */
+    .marquee-sec {
+      padding: 2.5rem 0 3rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: #FAF8F5;
+      overflow: hidden;
+    }
+
+    .marquee-title {
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.5rem;
+    }
+
+    .marquee-wrap {
+      display: flex;
+      overflow: hidden;
+      user-select: none;
+      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      position: relative;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 2rem;
+      flex-shrink: 0;
+      animation: marqueeLeft 32s linear infinite;
+      align-items: center;
+    }
+
+    .marquee-track.reverse {
+      animation: marqueeRight 32s linear infinite;
+      margin-top: 1rem;
+    }
+
+    .marquee-wrap:hover .marquee-track {
+      animation-play-state: paused;
+    }
+
+    .logo-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      background: var(--card-bg);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #404843;
+      filter: grayscale(100%);
+      opacity: 0.8;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .logo-item:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+      border-color: var(--accent);
+      color: var(--ink);
+      transform: translateY(-1px);
+    }
+
+    .logo-item img {
+      width: 17px;
+      height: 17px;
+      object-fit: contain;
+    }
+
+    @keyframes marqueeLeft {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes marqueeRight {
+      from {
+        transform: translateX(-50%);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    .trademark-note {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 1.25rem;
+      font-style: italic;
+    }
+
+    /* ── BUILDING PARTNERS PILLARS ───────────────────────────── */
+    .partners-pillar-sec {
+      padding: 6rem 0;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pillar-heading {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 3.5rem;
+    }
+
+    .pillar-heading h2 {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      line-height: 1.15;
+      font-weight: 600;
+      margin-bottom: 0.85rem;
+    }
+
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .pillar-card {
+      padding: 2.25rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #FAF8F5;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .pillar-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .pillar-num {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .pillar-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 0.65rem;
+      color: var(--ink);
+    }
+
+    .pillar-card p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── CAPABILITIES GRID ───────────────────────────────────── */
+    .caps-sec {
+      padding: 6.5rem 0;
+    }
+
+    .caps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .cap-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .cap-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px rgba(15, 18, 16, 0.04);
+    }
+
+    .cap-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.1rem;
+    }
+
+    .cap-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .cap-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ── HOW IT WORKS ────────────────────────────────────────── */
+    .how-sec {
+      padding: 6rem 0;
+      background: #FAF8F5;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      position: relative;
+    }
+
+    .step-badge {
+      display: inline-block;
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+    }
+
+    .step-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.45rem;
+    }
+
+    .step-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ── WHATSAPP COST CALCULATOR ────────────────────────────── */
+    .calc-sec {
+      padding: 6.5rem 0;
+    }
+
+    .calc-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.75rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      box-shadow: 0 16px 40px -10px rgba(15, 18, 16, 0.05);
+    }
+
+    .calc-field {
+      margin-bottom: 1.35rem;
+    }
+
+    .calc-field label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+    }
+
+    .calc-field select,
+    .calc-field input {
+      width: 100%;
+      padding: 0.75rem 0.95rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: #FAF8F5;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .calc-result {
+      background: #FAF8F5;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .calc-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    .calc-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 1rem;
+    }
+
+    .calc-total-val {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ── PACKAGES & ENGAGEMENT ───────────────────────────────── */
+    .packages-sec {
+      padding: 6.5rem 0;
+      background: #FAF8F5;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pkg-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.75rem;
+      margin-top: 3.5rem;
+    }
+
+    .pkg-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .pkg-card.featured {
+      border: 2px solid var(--accent);
+      box-shadow: 0 16px 40px -8px rgba(14, 107, 77, 0.12);
+    }
+
+    .pkg-featured-badge {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.85rem;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pkg-name {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .pkg-sub {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .pkg-price {
+      font-family: var(--font-serif);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 1.5rem;
+      line-height: 1;
+    }
+
+    .pkg-price span {
+      font-size: 0.9rem;
+      font-family: var(--font-sans);
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .pkg-features {
+      list-style: none;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      font-size: 0.88rem;
+    }
+
+    .pkg-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      color: #374151;
+    }
+
+    .pkg-features li svg {
+      color: var(--accent);
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── FOUNDING PARTNER CTA (RULE 1 COMPLIANCE) ────────────── */
+    .founding-banner {
+      background: var(--dark-sec);
+      color: #F6F4EF;
+      border-radius: 16px;
+      padding: 3.5rem;
+      text-align: center;
+      margin: 4rem auto 0;
+      max-width: 1000px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .founding-banner h3 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .founding-banner p {
+      color: var(--dark-muted);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    < !-- TODO: real testimonial -->
+
+    /* ── FOUNDER SECTION ─────────────────────────────────────── */
+    .founder-sec {
+      padding: 6rem 0;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .founder-card {
+      max-width: 820px;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      background: #FAF8F5;
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .founder-av {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: var(--dark-sec);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 3px solid var(--accent);
+    }
+
+    .founder-info h3 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .founder-role {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.85rem;
+    }
+
+    .founder-bio {
+      font-size: 0.94rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+
+    .founder-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .founder-links a:hover {
+      color: var(--accent);
+    }
+
+    /* ── FAQ ─────────────────────────────────────────────────── */
+    .faq-sec {
+      padding: 6.5rem 0;
+    }
+
+    .faq-grid {
+      max-width: 820px;
+      margin: 3rem auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card-bg);
+      overflow: hidden;
+    }
+
+    .faq-q {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    .faq-q svg {
+      transition: transform 0.2s ease;
+      width: 18px;
+      height: 18px;
+      color: var(--accent);
+    }
+
+    .faq-item.open .faq-q svg {
+      transform: rotate(180deg);
+    }
+
+    .faq-a {
+      padding: 0 1.5rem 1.35rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .faq-item.open .faq-a {
+      display: block;
+    }
+
+    /* ── CONTACT & FOOTER ────────────────────────────────────── */
+    .contact-sec {
+      padding: 6.5rem 0;
+      background: var(--dark-sec);
+      color: #F6F4EF;
+    }
+
+    .contact-box {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+    }
+
+    .c-field {
+      margin-bottom: 1.1rem;
+    }
+
+    .c-field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--dark-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .c-field input,
+    .c-field textarea {
+      width: 100%;
+      padding: 0.75rem 0.95rem;
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      color: #F6F4EF;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .c-field input:focus,
+    .c-field textarea:focus {
+      border-color: var(--accent);
+    }
+
+    footer {
+      background: #080A09;
+      color: var(--dark-muted);
+      padding: 4rem 0 2.5rem;
+      border-top: 1px solid var(--dark-border);
+      font-size: 0.82rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 3rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .footer-col h4 {
+      color: #F6F4EF;
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.1rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .footer-col a:hover {
+      color: #F6F4EF;
+    }
+
+    .footer-bottom {
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .pillar-grid,
+      .caps-grid,
+      .steps-grid,
+      .pkg-grid,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calc-box {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+      }
+
+      .founder-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── 1. SHARED UNIFIED NAVIGATION ─────────────────────── -->
+  <div data-public-nav data-active-page="home"></div>
+
+  <!-- ── 2. HERO SECTION ─────────────────────────────────────── -->
+  <header class="hero container">
+    <div class="hero-grid">
+      <div>
+        <div class="pill-tag">
+          <i data-lucide="sparkles" style="width:14px;height:14px"></i> The Growth Partner for Indian Businesses
+        </div>
+        <h1>Marketing that shows you the cost of <em>every lead.</em></h1>
+        <p>
+          AI Chatbot, WhatsApp campaigns, performance marketing, and creative production in one platform. Built by
+          operators, not an agency.
+        </p>
+        <div class="hero-ctas">
+          <a href="app.html" class="btn btn-primary" style="padding:0.85rem 1.6rem;font-size:0.95rem">
+            Start Free (No Card Needed) →
+          </a>
+          <a href="#contact" class="btn btn-secondary" style="padding:0.85rem 1.4rem">
+            Book a Strategy Call
+          </a>
+        </div>
+        <div class="hero-note">
+          <i data-lucide="check-circle-2"></i>
+          <span>Setup in 10 minutes · Keep your own ad accounts · Full data transparency</span>
+        </div>
+      </div>
+
+      <!-- Real-Looking Product UI Mock (HTML/CSS) -->
+      <div class="hero-mock">
+        <div class="mock-topbar">
+          <div class="mock-dots">
+            <div class="mock-dot"></div>
+            <div class="mock-dot"></div>
+            <div class="mock-dot"></div>
+          </div>
+          <span style="font-size:0.75rem;color:var(--muted);font-weight:600">embedease.in/dashboard</span>
+          <div class="mock-badge">● Live Attribution</div>
+        </div>
+        <div class="mock-body">
+          <div class="mock-stat-row">
+            <div class="mock-stat">
+              <div class="mock-stat-lbl">Cost Per Lead (CPL)</div>
+              <div class="mock-stat-val t-num">₹142.50</div>
+              <div class="mock-stat-sub">↓ 34% vs industry avg</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-lbl">Return on Ad Spend</div>
+              <div class="mock-stat-val t-num">4.2x</div>
+              <div class="mock-stat-sub">Revenue: ₹4,85,000</div>
+            </div>
+          </div>
+
+          <div
+            style="font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:0.6rem">
+            Recent Verified Leads</div>
+          <div class="mock-lead-row">
+            <div class="mock-lead-info">
+              <div class="mock-av">RS</div>
+              <div>
+                <div style="font-weight:600">Rahul Saxena</div>
+                <div style="color:var(--muted);font-size:0.7rem">Meta Ads · Diwali_Camp_02</div>
+              </div>
+            </div>
+            <span class="mock-ch-pill">META ADS</span>
+          </div>
+          <div class="mock-lead-row">
+            <div class="mock-lead-info">
+              <div class="mock-av" style="background:rgba(234,67,53,0.1);color:#EA4335">PK</div>
+              <div>
+                <div style="font-weight:600">Pooja Kulkarni</div>
+                <div style="color:var(--muted);font-size:0.7rem">Google Ads · Search_AppInstall</div>
+              </div>
+            </div>
+            <span class="mock-ch-pill" style="background:rgba(234,67,53,0.12);color:#EA4335">GOOGLE ADS</span>
+          </div>
+          <div class="mock-lead-row">
+            <div class="mock-lead-info">
+              <div class="mock-av" style="background:rgba(37,211,102,0.15);color:#25D366">VM</div>
+              <div>
+                <div style="font-weight:600">Vivek Mishra</div>
+                <div style="color:var(--muted);font-size:0.7rem">WhatsApp · Broadcast_Tier1</div>
+              </div>
+            </div>
+            <span class="mock-ch-pill" style="background:rgba(37,211,102,0.15);color:#25D366">WHATSAPP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 3. LOGO MARQUEE (RULE 3 COMPLIANCE) ──────────────────── -->
+  <section class="marquee-sec">
+    <div class="marquee-title">Platforms We Run Campaigns & Integrate On</div>
+    <div class="marquee-wrap">
+      <div class="marquee-track">
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/googleads/4285F4" alt="Google Ads"> Google Ads
+        </div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/meta/0081FB" alt="Meta"> Meta (Facebook/Instagram)
+        </div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp"> WhatsApp Cloud API
+        </div>
+        <div class="logo-item"><span style="font-weight:800;color:#0F1210">JioHotstar</span> Hotstar Ads</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/youtube/FF0000" alt="YouTube"> YouTube Ads</div>
+        <div class="logo-item"><span style="font-weight:800;color:#0E6B4D">Truecaller</span> Truecaller Verified</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/googleanalytics/E37400" alt="GA4"> Google Analytics
+          4</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/firebase/FFCA28" alt="Firebase"> Firebase App
+          Tracking</div>
+        <!-- Duplicated for smooth infinite loop -->
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/googleads/4285F4" alt="Google Ads"> Google Ads
+        </div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/meta/0081FB" alt="Meta"> Meta (Facebook/Instagram)
+        </div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp"> WhatsApp Cloud API
+        </div>
+        <div class="logo-item"><span style="font-weight:800;color:#0F1210">JioHotstar</span> Hotstar Ads</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/youtube/FF0000" alt="YouTube"> YouTube Ads</div>
+        <div class="logo-item"><span style="font-weight:800;color:#0E6B4D">Truecaller</span> Truecaller Verified</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/googleanalytics/E37400" alt="GA4"> Google Analytics
+          4</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/firebase/FFCA28" alt="Firebase"> Firebase App
+          Tracking</div>
+      </div>
+    </div>
+
+    <div class="marquee-wrap">
+      <div class="marquee-track reverse">
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/razorpay/0C2340" alt="Razorpay"> Razorpay</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/supabase/3ECF8E" alt="Supabase"> Supabase</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/n8n/EA4B71" alt="n8n"> n8n Automation</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/zapier/FF4A00" alt="Zapier"> Zapier</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/shopify/7AB55C" alt="Shopify"> Shopify</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/woocommerce/96588A" alt="WooCommerce"> WooCommerce
+        </div>
+        <!-- Duplicated for smooth infinite loop -->
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/razorpay/0C2340" alt="Razorpay"> Razorpay</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/supabase/3ECF8E" alt="Supabase"> Supabase</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/n8n/EA4B71" alt="n8n"> n8n Automation</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/zapier/FF4A00" alt="Zapier"> Zapier</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/shopify/7AB55C" alt="Shopify"> Shopify</div>
+        <div class="logo-item"><img src="https://cdn.simpleicons.org/woocommerce/96588A" alt="WooCommerce"> WooCommerce
+        </div>
+      </div>
+    </div>
+
+    <p class="trademark-note">
+      * All logos are trademarks of their respective owners. No official affiliation or endorsement implied.
+    </p>
+  </section>
+
+  <!-- ── 4. BUILDING PARTNERS PHILOSOPHY ─────────────────────── -->
+  <section class="partners-pillar-sec">
+    <div class="container">
+      <div class="pillar-heading">
+        <div class="pill-tag">Our Core Belief</div>
+        <h2>"We are not an agency. We are your building partners."</h2>
+        <p style="color:var(--muted);font-size:1.05rem">
+          Agencies charge fat retainers, keep your ad accounts hostage, and give you vanity metric reports. We build
+          alongside you with absolute data transparency.
+        </p>
+      </div>
+
+      <div class="pillar-grid">
+        <div class="pillar-card">
+          <div class="pillar-num">01</div>
+          <h3>We build it with you</h3>
+          <p>
+            From your website chatbot to Meta/Google ad funnels and WhatsApp broadcasts, we configure and optimise
+            systems collaboratively. You see the workflow, code, and exact campaign setups.
+          </p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-num">02</div>
+          <h3>You own the data & accounts</h3>
+          <p>
+            Zero account lock-in. Your Meta Ads Manager, Google Ads, and WhatsApp Cloud API accounts remain 100% under
+            your business credentials. All leads and customer data belong strictly to you.
+          </p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-num">03</div>
+          <h3>You see every rupee</h3>
+          <p>
+            No hidden markups on media spend. Our dashboard reconciles ad expenditure down to individual lead
+            attribution, customer acquisition cost (CAC), and pipeline revenue.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 5. PLATFORM CAPABILITIES ────────────────────────────── -->
+  <section id="platform" class="caps-sec container">
+    <div style="text-align:center;max-width:680px;margin:0 auto">
+      <div class="pill-tag">What EmbedEase Does</div>
+      <h2 style="font-family:var(--font-serif);font-size:2.5rem;font-weight:600;margin-bottom:0.75rem">Complete
+        Full-Funnel Capabilities</h2>
+      <p style="color:var(--muted)">Everything Indian businesses need to turn traffic into qualified revenue.</p>
+    </div>
+
+    <div class="caps-grid">
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="bot"></i></div>
+        <h3>AI Chatbot in 10 Minutes</h3>
+        <p>Drop-in script tag on any site. Auto-detects English, Hindi, and Hinglish. Answers strictly from your
+          uploaded knowledge base without hallucinating.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="user-check"></i></div>
+        <h3>Lead Capture & Instant Alerts</h3>
+        <p>Smart lead capture triggered at high-intent moments. Delivers instant notifications to your phone and team
+          via WhatsApp & email.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="message-square"></i></div>
+        <h3>WhatsApp Automation</h3>
+        <p>Broadcast marketing campaigns, automated qualification flows, Click-to-WhatsApp ads attribution, and strict
+          STOP opt-out compliance.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="line-chart"></i></div>
+        <h3>Cost-Per-Lead (CPL) Tracking</h3>
+        <p>First-touch and last-touch attribution tracking GCLID, FBCLID, and UTM tags to calculate true CPL, CPQL, and
+          ROAS across every rupee spent.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="target"></i></div>
+        <h3>Performance Marketing Hub</h3>
+        <p>Hands-on strategy and optimization across Meta Ads, Google Ads (including mobile app-install campaigns), and
+          Hotstar Ads.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="video"></i></div>
+        <h3>AI Creatives & Ad Copy</h3>
+        <p>Generate high-converting ad hooks, multilingual copy variants, video scripts, and rapid banner creative
+          concepts aligned with Indian consumer psychology.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="git-branch"></i></div>
+        <h3>n8n & Webhook Automation</h3>
+        <p>Connect your lead pipeline with internal CRMs, Google Sheets, ERPs, and automated follow-up sequences using
+          webhook triggers.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="pie-chart"></i></div>
+        <h3>Executive Reporting</h3>
+        <p>Power BI and Looker-style visual reporting dashboards designed for founders and business operators who care
+          about profit, not impressions.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon"><i data-lucide="layout"></i></div>
+        <h3>E-Commerce UX & Testing</h3>
+        <p>Figma wireframes, conversion rate optimization (CRO) reviews, and rigorous testing drawn from real e-commerce
+          launch experience.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 6. HOW IT WORKS ─────────────────────────────────────── -->
+  <section class="how-sec">
+    <div class="container">
+      <div style="text-align:center;max-width:680px;margin:0 auto">
+        <div class="pill-tag">Execution Process</div>
+        <h2 style="font-family:var(--font-serif);font-size:2.5rem;font-weight:600">From Zero to Full Attribution in 4
+          Steps</h2>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <span class="step-badge">01</span>
+          <h3>Connect</h3>
+          <p>Paste one simple script tag onto your WordPress, Shopify, or custom HTML website.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">02</span>
+          <h3>Train</h3>
+          <p>Add your website URL, FAQs, and product catalog. The bot ingests and learns your exact business details.
+          </p>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">03</span>
+          <h3>Launch</h3>
+          <p>Activate your chatbot, launch targeted Meta/Google campaigns, and connect WhatsApp Cloud API.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">04</span>
+          <h3>Track</h3>
+          <p>Watch qualified leads stream into your Kanban CRM with full cost-per-lead and ROAS analytics.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 7. WHATSAPP COST CALCULATOR (§7 COMPLIANT) ──────────── -->
+  <section id="calculator" class="calc-sec container">
+    <div style="text-align:center;max-width:680px;margin:0 auto 3rem">
+      <div class="pill-tag">Transparent Pricing</div>
+      <h2 style="font-family:var(--font-serif);font-size:2.5rem;font-weight:600;margin-bottom:0.75rem">
+        WhatsApp Campaigns at Meta's Lowest Rates
+      </h2>
+      <p style="color:var(--muted)">Every paisa tracked per lead. Official Meta India per-message rate card + our
+        platform tier.</p>
+    </div>
+
+    <div class="calc-box">
+      <div>
+        <h3 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;margin-bottom:1.25rem">Live Cost
+          Calculator</h3>
+
+        <div class="calc-field">
+          <label>Message Category</label>
+          <select id="waCat" onchange="calcWa()">
+            <option value="marketing">Marketing (Promotions & Offers) — ₹0.78 / msg</option>
+            <option value="utility">Utility (Order updates, receipts) — ₹0.31 / msg</option>
+            <option value="service">Service (User-initiated support) — ₹0.29 / msg</option>
+            <option value="auth">Authentication (OTPs, Verification) — ₹0.14 / msg</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Monthly Message Volume</label>
+          <input type="number" id="waVol" value="10000" step="1000" min="500" oninput="calcWa()">
+        </div>
+
+        <div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-top:1.5rem">
+          <strong>Pricing Formula:</strong> (Meta Official Fee + Platform Delivery & Attribution Fee ₹0.04) + 18%
+          GST.<br>
+          <em>* Rates based on Meta's India Rate Card. High volume tiers qualify for additional discounts.</em>
+        </div>
+      </div>
+
+      <div class="calc-result">
+        <div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:1rem">
+            Estimated Cost Breakdown</div>
+          <div class="calc-price-row">
+            <span>Meta Official Fee:</span>
+            <span class="t-num" id="cMetaFee">₹7,800</span>
+          </div>
+          <div class="calc-price-row">
+            <span>EmbedEase Platform Fee:</span>
+            <span class="t-num" id="cPlatFee">₹400</span>
+          </div>
+          <div class="calc-price-row">
+            <span>GST (18%):</span>
+            <span class="t-num" id="cGst">₹1,476</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="calc-total-row">
+            <div>
+              <div style="font-size:0.8rem;color:var(--muted);font-weight:600">Total Estimated Cost</div>
+              <div style="font-size:0.75rem;color:var(--accent);font-weight:500" id="cEffective">Effective: ₹0.96 /
+                message</div>
+            </div>
+            <div class="calc-total-val t-num" id="cTotal">₹9,676</div>
+          </div>
+          <a href="#contact" class="btn btn-primary" style="width:100%;margin-top:1.25rem;text-align:center">
+            Launch WhatsApp Campaign →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 8. PACKAGES & ENGAGEMENT ────────────────────────────── -->
+  <section id="packages" class="packages-sec">
+    <div class="container">
+      <div style="text-align:center;max-width:680px;margin:0 auto">
+        <div class="pill-tag">Engagement Models</div>
+        <h2 style="font-family:var(--font-serif);font-size:2.5rem;font-weight:600;margin-bottom:0.75rem">"Done-With-You"
+          Growth Packages</h2>
+        <p style="color:var(--muted)">Transparent monthly pricing. No long-term lock-in.</p>
+      </div>
+
+      <div class="pkg-grid">
+        <!-- Starter -->
+        <div class="pkg-card">
+          <div>
+            <div class="pkg-name">Starter</div>
+            <div class="pkg-sub">For emerging businesses validating digital conversion</div>
+            <div class="pkg-price t-num">₹999 <span>/ month</span></div>
+            <ul class="pkg-features">
+              <li><i data-lucide="check"></i> 1 AI Chatbot with custom knowledge base</li>
+              <li><i data-lucide="check"></i> Up to 1,000 monthly conversations</li>
+              <li><i data-lucide="check"></i> Lead Capture with WhatsApp & Email alerts</li>
+              <li><i data-lucide="check"></i> Standard UTM attribution pipeline</li>
+            </ul>
+          </div>
+          <a href="app.html" class="btn btn-secondary">Get Started Free</a>
+        </div>
+
+        <!-- Growth (Featured) -->
+        <div class="pkg-card featured">
+          <div class="pkg-featured-badge">Most Popular for Growth</div>
+          <div>
+            <div class="pkg-name">Growth Partner</div>
+            <div class="pkg-sub">For companies spending ₹25k–₹2L/mo on Meta or Google Ads</div>
+            <div class="pkg-price t-num">₹2,499 <span>/ month</span></div>
+            <ul class="pkg-features">
+              <li><i data-lucide="check"></i> Up to 3 AI Chatbots (Multilingual Hindi/English)</li>
+              <li><i data-lucide="check"></i> 5,000 conversations / month</li>
+              <li><i data-lucide="check"></i> Performance Hub (CPL, CPQL, CAC, ROAS)</li>
+              <li><i data-lucide="check"></i> Full Kanban CRM with 1-click WhatsApp follow-up</li>
+              <li><i data-lucide="check"></i> WhatsApp Cloud API broadcast campaigns</li>
+              <li><i data-lucide="check"></i> Bi-weekly optimization strategy review</li>
+            </ul>
+          </div>
+          <a href="app.html" class="btn btn-primary">Start Growth Trial →</a>
+        </div>
+
+        <!-- Agency / Partner -->
+        <div class="pkg-card">
+          <div>
+            <div class="pkg-name">Scale / Reseller</div>
+            <div class="pkg-sub">For multi-brand operators, agencies, and partners</div>
+            <div class="pkg-price t-num">₹9,999 <span>/ month</span></div>
+            <ul class="pkg-features">
+              <li><i data-lucide="check"></i> Unlimited chatbots & clients under your brand</li>
+              <li><i data-lucide="check"></i> 50,000 conversations / month</li>
+              <li><i data-lucide="check"></i> Partner Reseller Portal (sub-client oversight)</li>
+              <li><i data-lucide="check"></i> Custom ad spend & revenue reconciliation</li>
+              <li><i data-lucide="check"></i> Dedicated Slack / WhatsApp support channel</li>
+            </ul>
+          </div>
+          <a href="#contact" class="btn btn-secondary">Talk to Founder</a>
+        </div>
+      </div>
+
+      <!-- Founding Partner Program (Honest Replacement for Fake Testimonials) -->
+      <div class="founding-banner">
+        <div class="pill-tag"
+          style="background:rgba(224,165,38,0.15);color:var(--amber);border-color:rgba(224,165,38,0.3)">
+          Exclusive Launch Cohort
+        </div>
+        <h3>The EmbedEase Founding Partner Program</h3>
+        <p>
+          We are accepting 10 select Indian businesses to work directly with our engineering and performance marketing
+          team for 60 days. We personally configure your chatbot, build your attribution funnel, and optimize your ad
+          spend.
+        </p>
+        <a href="#contact" class="btn btn-amber" style="padding:0.85rem 1.8rem;font-weight:700">
+          Apply for Founding Partner Access →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 9. FOUNDER SECTION (§8.3 & RULE 2 COMPLIANT) ────────── -->
+  <section class="founder-sec container">
+    <div class="founder-card">
+      <div class="founder-av">SS</div>
+      <div class="founder-info">
+        <h3>Shubham Shrivastava</h3>
+        <div class="founder-role">Founder, Roopya Technologies · Creator of EmbedEase</div>
+        <p class="founder-bio">
+          Hands-on growth builder and full-stack operator. Experienced across Meta Ads, Google Ads (including mobile
+          app-install campaigns), Hotstar Ads, WhatsApp Cloud API integrations, and n8n automations. Built EmbedEase
+          end-to-end to eliminate the opacity of traditional marketing agencies and give founders complete clarity over
+          every rupee spent.
+        </p>
+        <div class="founder-links">
+          <a href="https://www.linkedin.com/in/shubhamshrivastavaa/" target="_blank" rel="noopener"
+            style="display:flex;align-items:center;gap:0.35rem">
+            <i data-lucide="linkedin" style="width:16px;height:16px"></i> Connect on LinkedIn
+          </a>
+          <span style="color:var(--muted)">·</span>
+          <span>Bhopal / Pune, India</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 10. FREQUENTLY ASKED QUESTIONS ──────────────────────── -->
+  <section class="faq-sec container">
+    <div style="text-align:center;max-width:680px;margin:0 auto">
+      <div class="pill-tag">Clear Answers</div>
+      <h2 style="font-family:var(--font-serif);font-size:2.5rem;font-weight:600">Frequently Asked Questions</h2>
+    </div>
+
+    <div class="faq-grid">
+      <div class="faq-item open">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Who owns the ad accounts and customer data?</span>
+          <i data-lucide="chevron-down"></i>
+        </div>
+        <div class="faq-a">
+          You own 100% of your ad accounts, WhatsApp API numbers, and customer data. We never hold client accounts
+          hostage. If you ever leave EmbedEase, all your assets and history remain entirely yours.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>How does the chatbot prevent hallucinations?</span>
+          <i data-lucide="chevron-down"></i>
+        </div>
+        <div class="faq-a">
+          Our chatbot utilizes strict Retrieval-Augmented Generation (RAG). It only answers questions using your
+          approved business knowledge base. If information is missing, it politely informs the visitor and requests
+          their contact details for a human callback.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Can I use my existing WhatsApp Business number?</span>
+          <i data-lucide="chevron-down"></i>
+        </div>
+        <div class="faq-a">
+          Yes. You can connect your official Meta WhatsApp Cloud API number. We guide you through the Meta Business
+          verification process and template approvals step-by-step.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>How fast can we go live?</span>
+          <i data-lucide="chevron-down"></i>
+        </div>
+        <div class="faq-a">
+          The AI chatbot can be installed and trained on your website in under 10 minutes. Custom ad campaigns and
+          WhatsApp Cloud API verification typically go live within 24–48 hours.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>How does attribution tracking work without third-party cookies?</span>
+          <i data-lucide="chevron-down"></i>
+        </div>
+        <div class="faq-a">
+          EmbedEase uses first-party persistence via our lightweight widget script. It stores UTM parameters, GCLID
+          (Google Click ID), and FBCLID (Meta Click ID) directly in the visitor session and ties them permanently to
+          submitted leads.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 11. CONTACT & STRATEGY CALL ─────────────────────────── -->
+  <section id="contact" class="contact-sec">
+    <div class="container">
+      <div style="text-align:center;max-width:640px;margin:0 auto 2.5rem">
+        <div class="pill-tag"
+          style="background:rgba(255,255,255,0.08);color:#F6F4EF;border-color:rgba(255,255,255,0.15)">
+          Direct Access
+        </div>
+        <h2 style="font-family:var(--font-serif);font-size:2.4rem;font-weight:600;margin-bottom:0.5rem">
+          Let’s Build Your Growth Engine
+        </h2>
+        <p style="color:var(--dark-muted)">
+          Tell us about your business and goals. We respond personally within 4 hours.
+        </p>
+      </div>
+
+      <div class="contact-box">
+        <form id="contactForm" onsubmit="submitContact(event)">
+          <div class="c-field">
+            <label>Your Name *</label>
+            <input type="text" id="cName" placeholder="e.g. Vikram Malhotra" required>
+          </div>
+          <!-- Honeypot Anti-Spam Field -->
+          <input type="text" id="cHp" name="website_hp" style="display:none !important;" tabindex="-1" autocomplete="off">
+          <div class="c-field">
+            <label>Phone / WhatsApp Number *</label>
+            <input type="tel" id="cPhone" placeholder="e.g. +91 98765 43210" required>
+          </div>
+          <div class="c-field">
+            <label>Work Email *</label>
+            <input type="email" id="cEmail" placeholder="e.g. vikram@mycompany.in" required>
+          </div>
+          <div class="c-field">
+            <label>Website or Business Category</label>
+            <input type="text" id="cBiz" placeholder="e.g. Direct-to-Consumer Apparel / SaaS / Real Estate">
+          </div>
+          <div class="c-field">
+            <label>What are you looking to achieve?</label>
+            <textarea id="cNeeds" rows="3"
+              placeholder="Tell us about your monthly lead targets or advertising bottlenecks..."></textarea>
+          </div>
+          <button type="submit" id="cSubmitBtn" class="btn btn-primary"
+            style="width:100%;padding:0.9rem;font-size:0.95rem">
+            Book Strategy Discussion →
+          </button>
+          <div id="cMsg" style="display:none;margin-top:1rem;font-size:0.88rem;text-align:center;padding:10px;border-radius:var(--radius-md);">
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 12. SHARED UNIFIED FOOTER ────────────────────────── -->
+  <div data-public-footer></div>
+
+  <!-- ── INTERACTIVE SCRIPTS ─────────────────────────────────── -->
+  <script>
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
+
+    // WhatsApp Cost Calculator Logic
+    const META_RATES = {
+      marketing: 0.78,
+      utility: 0.31,
+      service: 0.29,
+      auth: 0.14
+    };
+    const PLATFORM_FEE_PER_MSG = 0.04;
+
+    function calcWa() {
+      const cat = document.getElementById('waCat').value;
+      const vol = Math.max(500, Number(document.getElementById('waVol').value) || 500);
+
+      const metaRate = META_RATES[cat] || 0.78;
+      const metaFee = vol * metaRate;
+      const platFee = vol * PLATFORM_FEE_PER_MSG;
+      const subtotal = metaFee + platFee;
+      const gst = subtotal * 0.18;
+      const total = subtotal + gst;
+      const effectiveRate = (total / vol).toFixed(2);
+
+      document.getElementById('cMetaFee').textContent = '₹' + Math.round(metaFee).toLocaleString('en-IN');
+      document.getElementById('cPlatFee').textContent = '₹' + Math.round(platFee).toLocaleString('en-IN');
+      document.getElementById('cGst').textContent = '₹' + Math.round(gst).toLocaleString('en-IN');
+      document.getElementById('cTotal').textContent = '₹' + Math.round(total).toLocaleString('en-IN');
+      document.getElementById('cEffective').textContent = `Effective: ₹${effectiveRate} / message (incl. GST)`;
+    }
+    calcWa();
+
+    // FAQ Accordion
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    // Contact Form Submission (Saves to Supabase inquiries & sends email notification)
+    async function submitContact(e) {
+      e.preventDefault();
+      const btn = document.getElementById('cSubmitBtn');
+      const msg = document.getElementById('cMsg');
+      btn.disabled = true;
+      btn.textContent = 'Submitting Details...';
+      msg.style.display = 'none';
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const payload = {
+        form_name: 'homepage_strategy_discussion',
+        name: document.getElementById('cName').value.trim(),
+        phone: document.getElementById('cPhone').value.trim(),
+        email: document.getElementById('cEmail').value.trim(),
+        company: document.getElementById('cBiz').value.trim(),
+        message: document.getElementById('cNeeds').value.trim(),
+        page_url: window.location.href,
+        utm_source: urlParams.get('utm_source') || 'direct',
+        utm_medium: urlParams.get('utm_medium') || '',
+        utm_campaign: urlParams.get('utm_campaign') || '',
+        utm_term: urlParams.get('utm_term') || '',
+        utm_content: urlParams.get('utm_content') || '',
+        gclid: urlParams.get('gclid') || '',
+        fbclid: urlParams.get('fbclid') || '',
+        website_hp: document.getElementById('cHp').value
+      };
+
+      try {
+        const res = await fetch('https://rlzscyjegyorjpagguhc.supabase.co/functions/v1/notify-inquiry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          msg.style.display = 'block';
+          msg.style.background = 'var(--accent-soft)';
+          msg.style.border = '1px solid var(--accent-border)';
+          msg.style.color = 'var(--accent)';
+          msg.innerHTML = '✓ Thank you! Your request has been confirmed. Shubham will connect with you via WhatsApp & email within 4 hours.';
+          btn.textContent = 'Details Received!';
+        } else {
+          throw new Error('Server returned ' + res.status);
+        }
+      } catch (err) {
+        console.error('Submission error:', err);
+        msg.style.display = 'block';
+        msg.style.background = '#fef2f2';
+        msg.style.border = '1px solid #fecaca';
+        msg.style.color = '#b91c1c';
+        msg.innerHTML = '⚠️ Submission could not be processed. Please try again or email <a href="mailto:support@embedease.in" style="color:#b91c1c;font-weight:700;text-decoration:underline;">support@embedease.in</a>.';
+        btn.disabled = false;
+        btn.textContent = 'Retry Discussion Booking →';
+      }
+    }
+  </script>
+
+  <!-- Dogfood: Own Chatbot Widget Installed On Our Site -->
+  <script src="widget.js" data-bot-id="embedease-production-bot" data-color="#0E6B4D"
+    data-name="EmbedEase Growth Partner" data-whatsapp="919425625642"
+    data-welcome="Hi! How can we help your business generate more qualified leads today?">
+    </script>
+
+</body>
+
+</html>
