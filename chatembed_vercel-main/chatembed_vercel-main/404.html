@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Page Not Found | EmbedEase</title>
+  <meta name="description" content="The page you requested could not be found on EmbedEase.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+  <link rel="stylesheet" href="/assets/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js" defer></script>
+  <script src="/assets/theme.js" defer></script>
+</head>
+<body style="min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;">
+
+  <!-- Shared Public Navigation -->
+  <div data-public-nav data-active-page="404"></div>
+
+  <!-- 404 Main Content -->
+  <main class="section-py" style="flex:1;display:flex;align-items:center;">
+    <div class="container container-sm text-center">
+      <div class="card" style="padding:clamp(32px, 6vw, 64px);max-width:520px;margin:0 auto;">
+        <div style="width:56px;height:56px;border-radius:var(--radius-full);background:var(--amber-soft);color:var(--amber);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+          <i data-lucide="compass" style="width:28px;height:28px;"></i>
+        </div>
+        <span class="badge badge-neutral" style="margin-bottom:12px;">HTTP Error 404</span>
+        <h1 class="heading-xl" style="font-size:clamp(2.5rem, 6vw, 3.5rem);margin-bottom:8px;color:var(--accent);">404</h1>
+        <h2 class="heading-md" style="margin-bottom:12px;">Page Not Found</h2>
+        <p style="color:var(--muted);margin-bottom:28px;font-size:1rem;line-height:1.6;">
+          The link you followed may be broken or the page might have been removed. Let’s get you back on track.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+          <a href="/index.html" class="btn btn-primary">
+            <i data-lucide="arrow-left" style="width:16px;height:16px;"></i>
+            <span>Return Home</span>
+          </a>
+          <a href="/guide.html" class="btn btn-secondary">
+            <i data-lucide="book-open" style="width:16px;height:16px;"></i>
+            <span>Integration Guide</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Shared Public Footer -->
+  <div data-public-footer></div>
+
+</body>
+</html>

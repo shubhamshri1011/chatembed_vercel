@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing & Plans — EmbedEase</title>
+  <meta name="description" content="Transparent, fair pricing for high-attribution AI widgets. Zero hidden fees, instant Razorpay activation, 7-day money back guarantee.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+  <link rel="stylesheet" href="/assets/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js" defer></script>
+  <script src="/assets/theme.js" defer></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    .toggles-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .toggle-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      display: inline-flex;
+      gap: 4px;
+    }
+    .toggle-pill button {
+      background: transparent;
+      border: none;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .toggle-pill button.active {
+      background: var(--ink);
+      color: var(--bg);
+      font-weight: 600;
+    }
+
+    .plan-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .plan-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+    .plan-card.popular {
+      border: 2px solid var(--accent);
+      background: #FFFFFF;
+      box-shadow: var(--shadow-sm);
+    }
+    .popular-tag {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #FFFFFF;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+    }
+
+    .plan-price-num {
+      font-family: var(--font-serif);
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1;
+      margin: 16px 0 6px;
+    }
+    .plan-price-num sup {
+      font-size: 1.3rem;
+      vertical-align: top;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    .feat-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 24px 0 32px;
+      flex: 1;
+    }
+    .feat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      line-height: 1.4;
+      color: var(--ink-secondary);
+    }
+    .feat-item i {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Lifetime Deal Card */
+    .lifetime-card {
+      background: var(--surface);
+      border: 1px solid var(--amber-border);
+      border-radius: var(--radius-lg);
+      padding: clamp(24px, 4vw, 40px);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 32px;
+      margin-top: 48px;
+      position: relative;
+    }
+
+    /* Modal System */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 18, 16, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-window {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+      animation: modalPop 0.2s ease;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 800px) {
+      .lifetime-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .lifetime-card .lt-action {
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared Public Navigation -->
+  <div data-public-nav data-active-page="pricing"></div>
+
+  <!-- Hero Header -->
+  <header class="section-py" style="background:var(--bg-subtle);border-bottom:1px solid var(--border);">
+    <div class="container text-center">
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;">
+        <span class="badge badge-green">
+          <i data-lucide="shield-check" style="width:12px;height:12px;"></i>
+          7-Day Money-Back Guarantee
+        </span>
+        <span class="badge badge-amber">Instant Indian & Global Payments</span>
+      </div>
+      <h1 class="heading-xl" style="margin-bottom:16px;">Transparent, Predictable Plans</h1>
+      <p class="lead" style="margin:0 auto;max-width:620px;">
+        Pick the infrastructure tier that matches your monthly conversation volume. Scale smoothly without unexpected overage bills.
+      </p>
+    </div>
+  </header>
+
+  <!-- Pricing Content -->
+  <main class="section-py">
+    <div class="container">
+      
+      <!-- Currency & Billing Selectors -->
+      <div class="toggles-bar">
+        <div class="toggle-pill" id="currencyToggle">
+          <button type="button" id="tgl-inr" class="active" onclick="setCurrency('INR')">₹ INR (India)</button>
+          <button type="button" id="tgl-usd" onclick="setCurrency('USD')">$ USD (Global)</button>
+        </div>
+
+        <div class="toggle-pill" id="billingToggle">
+          <button type="button" id="tgl-monthly" class="active" onclick="setBilling('monthly')">Monthly</button>
+          <button type="button" id="tgl-yearly" onclick="setBilling('yearly')">
+            <span>Yearly</span>
+            <span class="badge badge-green" style="font-size:0.65rem;padding:1px 6px;margin-left:4px;">Save 20%</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Plans Grid -->
+      <div class="grid grid-3" style="gap:24px;align-items:stretch;">
+
+        <!-- Plan 1: Starter -->
+        <div class="plan-card" id="plan-starter">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <i data-lucide="zap" style="width:20px;height:20px;color:var(--accent);"></i>
+            <h2 class="heading-sm" style="margin:0;">Starter</h2>
+          </div>
+          <p style="font-size:0.85rem;color:var(--muted);margin:0;">Ideal for single-product landing pages and boutique sites.</p>
+
+          <div class="plan-price-num" id="starter-price"><sup>₹</sup>999</div>
+          <div style="font-size:0.8rem;color:var(--muted-light);" id="starter-usd">≈ $14 USD</div>
+          <div style="font-size:0.82rem;font-weight:500;color:var(--ink-secondary);margin-top:6px;padding-bottom:14px;border-bottom:1px solid var(--border);" id="starter-convos">
+            1,000 conversations/month · 1 website
+          </div>
+
+          <ul class="feat-list">
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>1 embeddable bot deployment</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>1,000 conversations / month</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>Full widget style customization</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>Basic UTM & referrer tracking</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>EmbedEase attribution branding</span></li>
+          </ul>
+
+          <button class="btn btn-secondary btn-full" onclick="openModal('starter')">
+            Get Starter Plan
+          </button>
+        </div>
+
+        <!-- Plan 2: Growth (Popular) -->
+        <div class="plan-card popular" id="plan-growth">
+          <span class="popular-tag">Most Popular</span>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <i data-lucide="sparkles" style="width:20px;height:20px;color:var(--accent);"></i>
+            <h2 class="heading-sm" style="margin:0;">Growth Partner</h2>
+          </div>
+          <p style="font-size:0.85rem;color:var(--muted);margin:0;">Designed for scaling e-commerce, D2C, and SaaS teams.</p>
+
+          <div class="plan-price-num" id="growth-price" style="color:var(--accent);"><sup>₹</sup>2,499</div>
+          <div style="font-size:0.8rem;color:var(--muted-light);" id="growth-usd">≈ $35 USD</div>
+          <div style="font-size:0.82rem;font-weight:500;color:var(--ink-secondary);margin-top:6px;padding-bottom:14px;border-bottom:1px solid var(--border);" id="growth-convos">
+            5,000 conversations/month · 3 websites · WhatsApp
+          </div>
+
+          <ul class="feat-list">
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>3 active website bots</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>5,000 conversations / month</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>WhatsApp multi-channel handoff</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>Leads CRM Kanban & Webhook export</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>White-label: remove branding</span></li>
+          </ul>
+
+          <button class="btn btn-primary btn-full" onclick="openModal('growth')">
+            Start Growth Plan
+          </button>
+        </div>
+
+        <!-- Plan 3: Scale / Pro -->
+        <div class="plan-card" id="plan-scale">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <i data-lucide="building-2" style="width:20px;height:20px;color:var(--accent);"></i>
+            <h2 class="heading-sm" style="margin:0;">Scale / Pro</h2>
+          </div>
+          <p style="font-size:0.85rem;color:var(--muted);margin:0;">For high-volume operations and multi-brand agencies.</p>
+
+          <div class="plan-price-num" id="scale-price"><sup>₹</sup>4,999</div>
+          <div style="font-size:0.8rem;color:var(--muted-light);" id="scale-usd">≈ $69 USD</div>
+          <div style="font-size:0.82rem;font-weight:500;color:var(--ink-secondary);margin-top:6px;padding-bottom:14px;border-bottom:1px solid var(--border);" id="scale-convos">
+            15,000 conversations/month · 10 websites
+          </div>
+
+          <ul class="feat-list">
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>10 active websites</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>15,000 conversations / month</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>Deep multi-touch UTM attribution</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>Priority SLA support with 4h resolution</span></li>
+            <li class="feat-item"><i data-lucide="check" style="width:16px;height:16px;color:var(--accent);"></i><span>Custom webhook & Zapier triggers</span></li>
+          </ul>
+
+          <button class="btn btn-secondary btn-full" onclick="openModal('scale')">
+            Get Scale Plan
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Lifetime Deal Callout -->
+      <div class="lifetime-card">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;">
+            <span class="badge badge-amber">
+              <i data-lucide="crown" style="width:12px;height:12px;"></i>
+              Founder Lifetime Pass
+            </span>
+            <span class="badge badge-neutral">Limited to early 50 teams</span>
+          </div>
+          <h2 class="heading-md" style="margin-bottom:8px;">Get Lifetime Access to EmbedEase Pro</h2>
+          <p style="color:var(--muted);font-size:0.95rem;max-width:580px;line-height:1.6;margin-bottom:16px;">
+            Pay once and receive lifetime software updates, 5,000 monthly conversations forever, all current and future integrations without recurring fees.
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <span class="badge" style="background:var(--bg-subtle);border:1px solid var(--border);">No monthly renewals</span>
+            <span class="badge" style="background:var(--bg-subtle);border:1px solid var(--border);">All integrations included</span>
+            <span class="badge" style="background:var(--bg-subtle);border:1px solid var(--border);">WhatsApp & CRM Hub</span>
+          </div>
+        </div>
+
+        <div class="lt-action" style="text-align:center;min-width:200px;">
+          <div style="font-size:0.85rem;color:var(--muted-light);text-decoration:line-through;" id="lt-original">₹95,988 value</div>
+          <div class="plan-price-num" style="margin:4px 0;color:var(--amber);" id="lt-price"><sup>₹</sup>14,999</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;" id="lt-note">one-time payment</div>
+          <button class="btn btn-primary" onclick="openModal('lifetime')" style="background:var(--amber);color:var(--ink);border-color:var(--amber);">
+            Claim Lifetime Deal
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Razorpay Checkout Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-window">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <h3 class="heading-sm" id="modalTitle">Complete Your Subscription</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal()" style="padding:4px 8px;">✕</button>
+      </div>
+
+      <!-- Selected Plan Summary -->
+      <div style="background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div id="mpi-name" style="font-weight:700;font-size:0.95rem;color:var(--ink);">Growth Partner</div>
+          <span class="badge badge-green" id="mpi-badge" style="margin-top:4px;">Monthly</span>
+        </div>
+        <div id="mpi-price" style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--accent);">₹2,499</div>
+      </div>
+
+      <!-- Customer Form -->
+      <form onsubmit="event.preventDefault(); initiatePayment();" style="display:flex;flex-direction:column;gap:14px;">
+        <div class="grid grid-2" style="gap:10px;">
+          <div>
+            <label class="form-label" style="font-size:0.8rem;">First Name</label>
+            <input type="text" id="pay-fname" class="form-input" required placeholder="Alex">
+          </div>
+          <div>
+            <label class="form-label" style="font-size:0.8rem;">Last Name</label>
+            <input type="text" id="pay-lname" class="form-input" placeholder="Sharma">
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" style="font-size:0.8rem;">Work Email (for receipt & access)</label>
+          <input type="email" id="pay-email" class="form-input" required placeholder="alex@company.com">
+        </div>
+
+        <div>
+          <label class="form-label" style="font-size:0.8rem;">Mobile Number (UPI / SMS receipt)</label>
+          <input type="tel" id="pay-phone" class="form-input" required placeholder="9876543210">
+        </div>
+
+        <div>
+          <label class="form-label" style="font-size:0.8rem;">Business / Organization Name</label>
+          <input type="text" id="pay-biz" class="form-input" placeholder="Acme Media Pvt Ltd">
+        </div>
+
+        <button type="submit" id="payBtn" class="btn btn-primary btn-full" style="margin-top:6px;">
+          <span id="payBtnText">Proceed to Secure Checkout</span>
+          <span id="paySpinner" style="display:none;">Connecting to Razorpay...</span>
+        </button>
+
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:0.75rem;color:var(--muted);margin-top:4px;">
+          <i data-lucide="lock" style="width:12px;height:12px;color:var(--accent);"></i>
+          <span>256-bit encrypted via Razorpay PCI-DSS Level 1 gateway</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-window text-center">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <i data-lucide="check" style="width:28px;height:28px;"></i>
+      </div>
+      <h3 class="heading-md" style="margin-bottom:8px;">Payment Successful!</h3>
+      <p style="font-size:0.9rem;color:var(--muted);line-height:1.5;margin-bottom:20px;" id="s-sub-text">
+        Your transaction has been verified. Welcome to EmbedEase!
+      </p>
+
+      <div id="s-details" style="background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;text-align:left;font-size:0.85rem;margin-bottom:24px;display:flex;flex-direction:column;gap:8px;">
+      </div>
+
+      <button class="btn btn-primary btn-full" onclick="window.location.href='/app.html'">
+        Open Console Dashboard →
+      </button>
+    </div>
+  </div>
+
+  <!-- Shared Public Footer -->
+  <div data-public-footer></div>
+
+  <script>
+    var RAZORPAY_KEY_ID = 'rzp_test_YourKeyHere'; // Production / Sandbox key
+
+    var PLANS = {
+      starter: {
+        name: 'Starter Plan',
+        INR: { monthly: 999, yearly: 830 },
+        USD: { monthly: 14, yearly: 11 },
+        convos: '1,000 conversations/month · 1 website'
+      },
+      growth: {
+        name: 'Growth Partner Plan',
+        INR: { monthly: 2499, yearly: 2080 },
+        USD: { monthly: 35, yearly: 29 },
+        convos: '5,000 conversations/month · 3 websites · WhatsApp'
+      },
+      scale: {
+        name: 'Scale / Pro Plan',
+        INR: { monthly: 4999, yearly: 4160 },
+        USD: { monthly: 69, yearly: 58 },
+        convos: '15,000 conversations/month · 10 websites · Full Attribution'
+      },
+      lifetime: {
+        name: 'Founder Lifetime Pass',
+        INR: { monthly: 14999, yearly: 14999 },
+        USD: { monthly: 179, yearly: 179 },
+        convos: '5,000 conversations/month forever · 3 websites'
+      }
+    };
+
+    var currency = 'INR';
+    var billing = 'monthly';
+    var activePlan = 'growth';
+
+    function setCurrency(c) {
+      currency = c;
+      document.getElementById('tgl-inr').classList.toggle('active', c === 'INR');
+      document.getElementById('tgl-usd').classList.toggle('active', c === 'USD');
+      updatePrices();
+    }
+
+    function setBilling(b) {
+      billing = b;
+      document.getElementById('tgl-monthly').classList.toggle('active', b === 'monthly');
+      document.getElementById('tgl-yearly').classList.toggle('active', b === 'yearly');
+      updatePrices();
+    }
+
+    function updatePrices() {
+      var sym = currency === 'INR' ? '₹' : '$';
+
+      ['starter', 'growth', 'scale'].forEach(function(key) {
+        var p = PLANS[key];
+        var price = p[currency][billing];
+        var usdEq = currency === 'INR'
+          ? '≈ $' + p.USD[billing] + ' USD'
+          : '≈ ₹' + p.INR[billing].toLocaleString('en-IN') + ' INR';
+
+        document.getElementById(key + '-price').innerHTML = '<sup>' + sym + '</sup>' + price.toLocaleString('en-IN');
+        document.getElementById(key + '-usd').textContent = usdEq;
+        document.getElementById(key + '-convos').textContent = p.convos + (billing === 'yearly' ? ' · 2 months free' : '');
+      });
+
+      if (currency === 'INR') {
+        document.getElementById('lt-price').innerHTML = '<sup>₹</sup>14,999';
+        document.getElementById('lt-original').textContent = '₹95,988 value (yearly plan × 1yr)';
+      } else {
+        document.getElementById('lt-price').innerHTML = '<sup>$</sup>179';
+        document.getElementById('lt-original').textContent = '$1,188 value (yearly plan × 1yr)';
+      }
+    }
+
+    function openModal(planKey) {
+      activePlan = planKey;
+      var p = PLANS[planKey];
+      var isLT = planKey === 'lifetime';
+      var price = isLT
+        ? (currency === 'INR' ? 14999 : 179)
+        : p[currency][billing];
+      var sym = currency === 'INR' ? '₹' : '$';
+
+      document.getElementById('mpi-name').textContent = p.name;
+      document.getElementById('mpi-price').textContent = sym + price.toLocaleString('en-IN') + (isLT ? ' one-time' : (billing === 'monthly' ? '/mo' : '/yr'));
+      document.getElementById('mpi-badge').textContent = isLT ? '⚡ Lifetime Pass' : (billing === 'monthly' ? 'Monthly' : 'Yearly −20%');
+
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+
+    function initiatePayment() {
+      var fname = document.getElementById('pay-fname').value.trim();
+      var email = document.getElementById('pay-email').value.trim();
+      var phone = document.getElementById('pay-phone').value.trim().replace(/\D/g, '');
+
+      if (!fname) { alert('Please enter your full name'); return; }
+      if (!email || !email.includes('@')) { alert('Please enter a valid email address'); return; }
+      if (!phone || phone.length < 10) { alert('Please enter a valid 10-digit mobile number'); return; }
+
+      var isLT = activePlan === 'lifetime';
+      var p = PLANS[activePlan];
+      var price = isLT
+        ? (currency === 'INR' ? 14999 : 179)
+        : p[currency][billing];
+
+      var amountInSmallestUnit = price * 100;
+      var currencyCode = currency === 'INR' ? 'INR' : 'USD';
+
+      var btn = document.getElementById('payBtn');
+      btn.disabled = true;
+      document.getElementById('payBtnText').style.display = 'none';
+      document.getElementById('paySpinner').style.display = 'inline';
+
+      var options = {
+        key: RAZORPAY_KEY_ID,
+        amount: amountInSmallestUnit,
+        currency: currencyCode,
+        name: 'EmbedEase',
+        description: p.name + (isLT ? ' — Lifetime' : (billing === 'monthly' ? ' — Monthly' : ' — Yearly')),
+        image: 'https://via.placeholder.com/60x60/0E6B4D/fff?text=EE',
+        prefill: {
+          name: fname + ' ' + (document.getElementById('pay-lname').value || ''),
+          email: email,
+          contact: phone
+        },
+        notes: {
+          plan: activePlan,
+          billing: isLT ? 'lifetime' : billing,
+          business: document.getElementById('pay-biz').value || ''
+        },
+        theme: { color: '#0E6B4D' },
+        modal: {
+          ondismiss: function() {
+            btn.disabled = false;
+            document.getElementById('payBtnText').style.display = 'inline';
+            document.getElementById('paySpinner').style.display = 'none';
+          }
+        },
+        handler: function(response) {
+          closeModal();
+          showSuccess({
+            name: fname,
+            email: email,
+            plan: p.name,
+            amount: (currency === 'INR' ? '₹' : '$') + price.toLocaleString('en-IN'),
+            paymentId: response.razorpay_payment_id,
+            billing: isLT ? 'Lifetime Pass' : (billing === 'monthly' ? 'Monthly' : 'Yearly')
+          });
+        }
+      };
+
+      try {
+        var rzp = new Razorpay(options);
+        rzp.on('payment.failed', function(resp) {
+          alert('Payment was not completed: ' + resp.error.description);
+          btn.disabled = false;
+          document.getElementById('payBtnText').style.display = 'inline';
+          document.getElementById('paySpinner').style.display = 'none';
+        });
+        rzp.open();
+      } catch (e) {
+        alert('Could not initialize Razorpay checkout. Please check configuration. ' + e.message);
+        btn.disabled = false;
+        document.getElementById('payBtnText').style.display = 'inline';
+        document.getElementById('paySpinner').style.display = 'none';
+      }
+    }
+
+    function showSuccess(data) {
+      document.getElementById('s-sub-text').textContent =
+        'Welcome ' + data.name + '! Your EmbedEase account has been provisioned. Access credentials sent to ' + data.email;
+
+      document.getElementById('s-details').innerHTML =
+        '<div style="display:flex;justify-content:space-between;"><span>Plan:</span><strong>' + data.plan + '</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>Amount:</span><strong>' + data.amount + '</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>Billing:</span><strong>' + data.billing + '</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>Payment ID:</span><code>' + data.paymentId + '</code></div>';
+
+      document.getElementById('successModal').classList.add('open');
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      updatePrices();
+    });
+  </script>
+
+</body>
+</html>

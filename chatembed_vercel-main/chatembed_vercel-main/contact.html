@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact & Support — EmbedEase</title>
+  <meta name="description" content="Get in touch with the EmbedEase engineering team. We assist with widget integration, custom enterprise deployments, and agency partnerships.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+  <link rel="stylesheet" href="/assets/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js" defer></script>
+  <script src="/assets/theme.js" defer></script>
+</head>
+<body>
+
+  <!-- Shared Public Navigation -->
+  <div data-public-nav data-active-page="contact"></div>
+
+  <!-- Hero Section -->
+  <header class="section-py" style="background:var(--bg-subtle);border-bottom:1px solid var(--border);">
+    <div class="container container-sm text-center">
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;">
+        <span class="badge badge-green">
+          <i data-lucide="headphones" style="width:12px;height:12px;"></i>
+          Support & Consultation
+        </span>
+      </div>
+      <h1 class="heading-xl" style="margin-bottom:16px;">We’re Here to Help</h1>
+      <p class="lead" style="margin:0 auto;max-width:600px;">
+        Have a question about integrating with your platform, custom domain setup, or enterprise deployment? Speak directly with our core engineering team.
+      </p>
+    </div>
+  </header>
+
+  <!-- Contact Form & Info Section -->
+  <main class="section-py">
+    <div class="container">
+      <div class="grid grid-2" style="gap:40px;align-items:start;">
+        
+        <!-- Left: Form -->
+        <div class="card" style="padding:clamp(24px, 4vw, 40px);">
+          <h2 class="heading-md" style="margin-bottom:8px;">Send a Message</h2>
+          <p style="color:var(--muted);font-size:0.95rem;margin-bottom:24px;">
+            We typically respond within 2 to 4 business hours.
+          </p>
+
+          <form id="contactForm" onsubmit="handleContactSubmit(event)" style="display:flex;flex-direction:column;gap:18px;">
+            <div>
+              <label for="cName" class="form-label">Full Name</label>
+              <input type="text" id="cName" class="form-input" required placeholder="Alex Sharma">
+            </div>
+
+            <div>
+              <label for="cEmail" class="form-label">Work Email</label>
+              <input type="email" id="cEmail" class="form-input" required placeholder="alex@company.com">
+            </div>
+
+            <div>
+              <label for="cPlatform" class="form-label">AI Platform Used</label>
+              <select id="cPlatform" class="form-select">
+                <option value="voiceflow">Voiceflow</option>
+                <option value="botpress">Botpress</option>
+                <option value="flowise">Flowise AI</option>
+                <option value="typebot">Typebot</option>
+                <option value="bland">Bland.ai / Retell AI</option>
+                <option value="other">Custom Webhook / Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="cMessage" class="form-label">How can we assist?</label>
+              <textarea id="cMessage" class="form-textarea" rows="4" required placeholder="Tell us about your website, integration goals, or specific question..."></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary btn-full">
+              <span>Send Message</span>
+              <i data-lucide="send" style="width:16px;height:16px;"></i>
+            </button>
+
+            <div id="contactFeedback" style="display:none;padding:12px;border-radius:var(--radius-md);background:var(--accent-soft);border:1px solid var(--accent-border);color:var(--accent);font-size:0.9rem;text-align:center;">
+              Thank you! Your message has been routed to our founder & engineering desk. We'll be in touch shortly.
+            </div>
+          </form>
+        </div>
+
+        <!-- Right: Direct Channels -->
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div class="card" style="padding:28px;">
+            <div style="display:flex;align-items:flex-start;gap:16px;">
+              <div style="width:42px;height:42px;border-radius:var(--radius-md);background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i data-lucide="mail" style="width:20px;height:20px;"></i>
+              </div>
+              <div>
+                <h3 class="heading-sm" style="margin-bottom:4px;">Email Support</h3>
+                <p style="color:var(--muted);font-size:0.9rem;margin-bottom:8px;">Direct line to engineering and billing.</p>
+                <a href="mailto:support@roopya.in" style="color:var(--accent);font-weight:600;font-size:0.95rem;">support@roopya.in</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:28px;">
+            <div style="display:flex;align-items:flex-start;gap:16px;">
+              <div style="width:42px;height:42px;border-radius:var(--radius-md);background:var(--amber-soft);color:var(--amber);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i data-lucide="message-square" style="width:20px;height:20px;"></i>
+              </div>
+              <div>
+                <h3 class="heading-sm" style="margin-bottom:4px;">WhatsApp Enterprise Desk</h3>
+                <p style="color:var(--muted);font-size:0.9rem;margin-bottom:8px;">Instant answers for active deployments.</p>
+                <a href="https://wa.me/919425625642?text=Hi%20EmbedEase%20Team,%20I%20have%20an%20integration%20question" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600;font-size:0.95rem;display:inline-flex;align-items:center;gap:6px;">
+                  <span>+91 94256 25642</span>
+                  <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:28px;">
+            <div style="display:flex;align-items:flex-start;gap:16px;">
+              <div style="width:42px;height:42px;border-radius:var(--radius-md);background:rgba(15,18,16,0.06);color:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i data-lucide="map-pin" style="width:20px;height:20px;"></i>
+              </div>
+              <div>
+                <h3 class="heading-sm" style="margin-bottom:4px;">Headquarters</h3>
+                <p style="color:var(--muted);font-size:0.9rem;line-height:1.5;">
+                  <strong>Roopya Technologies</strong><br>
+                  Founder: Shubham Shrivastava<br>
+                  Bengaluru, Karnataka, India
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick FAQ alert -->
+          <div style="padding:20px;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <i data-lucide="help-circle" style="width:16px;height:16px;color:var(--accent);"></i>
+              <strong style="font-size:0.9rem;">Need urgent setup help?</strong>
+            </div>
+            <p style="font-size:0.85rem;color:var(--muted);margin:0;">
+              Check our step-by-step <a href="/guide.html" style="color:var(--accent);font-weight:600;text-decoration:underline;">Integration Guide</a> or test live styles with the <a href="/widget-builder.html" style="color:var(--accent);font-weight:600;text-decoration:underline;">Widget Builder</a>.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Shared Public Footer -->
+  <div data-public-footer></div>
+
+  <script>
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      var btn = document.getElementById('submitBtn');
+      var feedback = document.getElementById('contactFeedback');
+      btn.disabled = true;
+      btn.innerHTML = '<span>Sending message...</span>';
+      
+      setTimeout(function() {
+        btn.style.display = 'none';
+        feedback.style.display = 'block';
+      }, 700);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Integration Guide & Documentation — EmbedEase</title>
+  <meta name="description" content="Step-by-step instructions for embedding AI chat widgets across WordPress, Shopify, Webflow, Wix, Voiceflow, Botpress, Flowise, Typebot, and custom HTML.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+  <link rel="stylesheet" href="/assets/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js" defer></script>
+  <script src="/assets/theme.js" defer></script>
+  <style>
+    .guide-step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .guide-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .platform-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .platform-card:hover, .platform-card.highlight {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-sm);
+    }
+    .platform-card ol {
+      padding-left: 18px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-top: 10px;
+    }
+    .code-snippet-box {
+      background: #181D1A;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+      margin: 16px 0;
+    }
+    .code-snippet-box pre {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #A3E635;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .copy-snippet-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #FFFFFF;
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .copy-snippet-btn:hover {
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared Public Navigation -->
+  <div data-public-nav data-active-page="guide"></div>
+
+  <!-- Hero Section -->
+  <header class="section-py" style="background:var(--bg-subtle);border-bottom:1px solid var(--border);">
+    <div class="container container-sm text-center">
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;">
+        <span class="badge badge-green">
+          <i data-lucide="book-open" style="width:12px;height:12px;"></i>
+          Official Documentation
+        </span>
+        <span class="badge badge-neutral">Widget v4.0</span>
+      </div>
+      <h1 class="heading-xl" style="margin-bottom:16px;">Integration Guide & Manual</h1>
+      <p class="lead" style="margin:0 auto;max-width:600px;">
+        Complete step-by-step instructions to embed, calibrate, and connect your AI assistant with any CMS, website builder, or agent backend.
+      </p>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="section-py">
+    <div class="container container-sm">
+      
+      <!-- Table of Contents -->
+      <div class="card" style="padding:24px;margin-bottom:40px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <i data-lucide="list" style="width:18px;height:18px;color:var(--accent);"></i>
+          <h2 class="heading-sm" style="margin:0;">Table of Contents</h2>
+        </div>
+        <div class="grid grid-2" style="gap:8px;font-size:0.9rem;">
+          <a href="#quickstart" class="footer-link" style="color:var(--ink-secondary);">1. Quickstart (2-Minute Setup)</a>
+          <a href="#platforms" class="footer-link" style="color:var(--ink-secondary);">2. CMS & Website Platforms</a>
+          <a href="#ai-engines" class="footer-link" style="color:var(--ink-secondary);">3. AI Backends (Voiceflow, Flowise, etc.)</a>
+          <a href="#lead-capture" class="footer-link" style="color:var(--ink-secondary);">4. Lead Capture & WhatsApp Handoff</a>
+          <a href="#attribution" class="footer-link" style="color:var(--ink-secondary);">5. Multi-Channel UTM Attribution</a>
+          <a href="#faq" class="footer-link" style="color:var(--ink-secondary);">6. Troubleshooting & FAQ</a>
+        </div>
+      </div>
+
+      <!-- Section 1: Quickstart -->
+      <section id="quickstart" style="margin-bottom:48px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span class="badge badge-green">Step 1</span>
+          <h2 class="heading-md" style="margin:0;">Quickstart: The 1-Line Embed</h2>
+        </div>
+        <p style="color:var(--muted);margin-bottom:20px;">
+          Adding EmbedEase to your website requires pasting one asynchronous script tag directly before the closing <code>&lt;/body&gt;</code> tag of your HTML.
+        </p>
+
+        <div class="code-snippet-box">
+          <pre id="codeSnippet">&lt;script src="https://embedease.in/widget.js"
+  data-bot-id="YOUR_BOT_ID"
+  data-color="#0E6B4D"
+  data-name="Aria"
+  data-whatsapp="919425625642"
+  data-welcome="Hi! How can I help your business today?"&gt;
+&lt;/script&gt;</pre>
+          <button class="copy-snippet-btn" onclick="copySnippet()">Copy Snippet</button>
+        </div>
+
+        <div class="guide-step-card">
+          <div class="guide-num">1</div>
+          <div>
+            <h4 style="font-size:0.95rem;font-weight:600;margin-bottom:4px;">Copy Your Bot ID</h4>
+            <p style="font-size:0.85rem;color:var(--muted);margin:0;">
+              Navigate to your <a href="/app.html" style="color:var(--accent);font-weight:600;text-decoration:underline;">Console Dashboard</a>, select your bot, and copy its unique UUID or embed snippet.
+            </p>
+          </div>
+        </div>
+
+        <div class="guide-step-card">
+          <div class="guide-num">2</div>
+          <div>
+            <h4 style="font-size:0.95rem;font-weight:600;margin-bottom:4px;">Paste into Your Site Footer</h4>
+            <p style="font-size:0.85rem;color:var(--muted);margin:0;">
+              Paste the code into your site template immediately before <code>&lt;/body&gt;</code>. Because it is non-blocking, it will not impact your Core Web Vitals or page load speed.
+            </p>
+          </div>
+        </div>
+
+        <div class="guide-step-card">
+          <div class="guide-num">3</div>
+          <div>
+            <h4 style="font-size:0.95rem;font-weight:600;margin-bottom:4px;">Verify Real-Time Appearance</h4>
+            <p style="font-size:0.85rem;color:var(--muted);margin:0;">
+              Refresh your site in an incognito window. The floating bubble will appear in the bottom-right corner ready for interaction.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: CMS & Website Platforms -->
+      <section id="platforms" style="margin-bottom:48px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span class="badge badge-amber">Step 2</span>
+          <h2 class="heading-md" style="margin:0;">Platform Installation Guides</h2>
+        </div>
+        <p style="color:var(--muted);margin-bottom:20px;">
+          Choose your hosting environment or CMS platform for tailored instructions:
+        </p>
+
+        <div class="grid grid-2" style="gap:16px;">
+          <div class="platform-card" id="plat-wordpress">
+            <h3 class="heading-sm" style="margin-bottom:4px;">WordPress</h3>
+            <ol>
+              <li>Log in to WordPress Admin.</li>
+              <li>Install the free "Header and Footer Scripts" plugin (or go to Appearance → Theme File Editor).</li>
+              <li>Paste the EmbedEase script into the <strong>Footer Scripts</strong> box.</li>
+              <li>Click Save Changes.</li>
+            </ol>
+          </div>
+
+          <div class="platform-card" id="plat-shopify">
+            <h3 class="heading-sm" style="margin-bottom:4px;">Shopify</h3>
+            <ol>
+              <li>Go to Online Store → Themes in Shopify Admin.</li>
+              <li>Click the three dots (···) → <strong>Edit Code</strong>.</li>
+              <li>Select <code>theme.liquid</code> under Layout.</li>
+              <li>Scroll to the bottom and paste before <code>&lt;/body&gt;</code>.</li>
+              <li>Click Save.</li>
+            </ol>
+          </div>
+
+          <div class="platform-card" id="plat-webflow">
+            <h3 class="heading-sm" style="margin-bottom:4px;">Webflow</h3>
+            <ol>
+              <li>Open Webflow Designer → Project Settings.</li>
+              <li>Click the <strong>Custom Code</strong> tab.</li>
+              <li>Paste the snippet in <strong>Footer Code</strong>.</li>
+              <li>Publish to your production domain.</li>
+            </ol>
+          </div>
+
+          <div class="platform-card" id="plat-framer">
+            <h3 class="heading-sm" style="margin-bottom:4px;">Framer</h3>
+            <ol>
+              <li>Open Project Settings → General.</li>
+              <li>Scroll to <strong>Custom Code</strong>.</li>
+              <li>Paste the snippet in the <strong>End of &lt;body&gt; tag</strong> box.</li>
+              <li>Click Save and Publish.</li>
+            </ol>
+          </div>
+
+          <div class="platform-card" id="plat-wix">
+            <h3 class="heading-sm" style="margin-bottom:4px;">Wix</h3>
+            <ol>
+              <li>Go to Settings → Custom Code in your Wix dashboard.</li>
+              <li>Click <strong>+ Add Custom Code</strong>.</li>
+              <li>Paste your script and set placement to <strong>Body - end</strong>.</li>
+              <li>Apply to All Pages.</li>
+            </ol>
+          </div>
+
+          <div class="platform-card" id="plat-nextjs">
+            <h3 class="heading-sm" style="margin-bottom:4px;">React / Next.js</h3>
+            <ol>
+              <li>In your root layout (<code>app/layout.tsx</code> or <code>pages/_document.tsx</code>):</li>
+              <li>Add <code>&lt;Script src="https://embedease.in/widget.js" ... /&gt;</code> with strategy="lazyOnload".</li>
+              <li>Verify in browser console.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: AI Backends & Platforms -->
+      <section id="ai-engines" style="margin-bottom:48px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span class="badge badge-green">Step 3</span>
+          <h2 class="heading-md" style="margin:0;">AI Agents & Voice Integrations</h2>
+        </div>
+        <p style="color:var(--muted);margin-bottom:20px;">
+          EmbedEase connects with any conversation backend through simple webhook relaying or platform proxying:
+        </p>
+
+        <div class="grid grid-2" style="gap:16px;">
+          <div class="card platform-card" id="plat-voiceflow" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span class="badge badge-neutral">Voiceflow</span>
+            </div>
+            <h3 class="heading-sm" style="margin-bottom:6px;">Voiceflow DM API</h3>
+            <p style="font-size:0.85rem;color:var(--muted);line-height:1.6;">
+              In your bot settings on EmbedEase, select "Voiceflow" as engine and enter your <code>VF_PROJECT_API_KEY</code>. Dialog state is synchronized seamlessly.
+            </p>
+          </div>
+
+          <div class="card platform-card" id="plat-botpress" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span class="badge badge-neutral">Botpress</span>
+            </div>
+            <h3 class="heading-sm" style="margin-bottom:6px;">Botpress Cloud Webhook</h3>
+            <p style="font-size:0.85rem;color:var(--muted);line-height:1.6;">
+              Provide your Botpress Webhook URL and Bot ID in settings. End-user inquiries are routed directly to your Botpress flow cards.
+            </p>
+          </div>
+
+          <div class="card platform-card" id="plat-flowise" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span class="badge badge-neutral">Flowise AI</span>
+            </div>
+            <h3 class="heading-sm" style="margin-bottom:6px;">Flowise Prediction Endpoint</h3>
+            <p style="font-size:0.85rem;color:var(--muted);line-height:1.6;">
+              Connect your self-hosted or cloud Flowise chatflow by entering the Prediction URL. Supports LangChain agents and custom vector stores.
+            </p>
+          </div>
+
+          <div class="card platform-card" id="plat-bland" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span class="badge badge-neutral">Voice AI</span>
+            </div>
+            <h3 class="heading-sm" style="margin-bottom:6px;">Bland.ai & Retell AI</h3>
+            <p style="font-size:0.85rem;color:var(--muted);line-height:1.6;">
+              Enable real-time voice call initiation directly from the chat widget. Visitors can click "Request Instant Voice Call" with zero latency.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: WhatsApp Handoff & Leads -->
+      <section id="lead-capture" style="margin-bottom:48px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span class="badge badge-amber">Step 4</span>
+          <h2 class="heading-md" style="margin:0;">Lead Capture & WhatsApp Direct Desk</h2>
+        </div>
+        <p style="color:var(--muted);margin-bottom:20px;">
+          When active, the widget gathers prospective buyer contact details and supports immediate WhatsApp conversation handoff:
+        </p>
+
+        <div class="card" style="padding:24px;">
+          <ul style="color:var(--muted);line-height:1.8;padding-left:20px;display:flex;flex-direction:column;gap:10px;">
+            <li><strong>Automated In-Chat Lead Form:</strong> After 3 conversational turns or upon user interest, an un-intrusive prompt asks for work email or phone number.</li>
+            <li><strong>One-Click WhatsApp Handoff:</strong> By adding <code>data-whatsapp="91XXXXXXXXXX"</code>, a prominent WhatsApp button lets buyers transition to WhatsApp with full chat context pre-filled.</li>
+            <li><strong>Leads CRM Kanban:</strong> View incoming contacts grouped by Hot, Warm, and Cold on your dashboard, or export to CSV.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Section 5: Troubleshooting & FAQ -->
+      <section id="faq">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span class="badge badge-neutral">FAQ</span>
+          <h2 class="heading-md" style="margin:0;">Frequently Asked Questions</h2>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="card" style="padding:20px;">
+            <h4 class="heading-sm" style="color:var(--accent);margin-bottom:6px;">Why is the widget not rendering on my site?</h4>
+            <p style="font-size:0.88rem;color:var(--muted);line-height:1.6;margin:0;">
+              Verify that: (1) The script tag is placed before <code>&lt;/body&gt;</code> and not inside <code>&lt;head&gt;</code>; (2) The <code>data-bot-id</code> matches your bot's ID in the dashboard; (3) Your bot status is set to "Live".
+            </p>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <h4 class="heading-sm" style="color:var(--accent);margin-bottom:6px;">Does the widget slow down my website?</h4>
+            <p style="font-size:0.88rem;color:var(--muted);line-height:1.6;margin:0;">
+              No. EmbedEase is lightweight (&lt; 28KB compressed), loads asynchronously from edge CDN nodes, and executes without blocking DOM rendering or triggering layout shifts (CLS).
+            </p>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <h4 class="heading-sm" style="color:var(--accent);margin-bottom:6px;">Can I customize the primary color to match my exact brand?</h4>
+            <p style="font-size:0.88rem;color:var(--muted);line-height:1.6;margin:0;">
+              Yes. Use the <a href="/widget-builder.html" style="color:var(--accent);font-weight:600;text-decoration:underline;">Widget Builder</a> or set <code>data-color="#YOURHEX"</code> on the script tag.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Shared Public Footer -->
+  <div data-public-footer></div>
+
+  <script>
+    function copySnippet() {
+      var code = document.getElementById('codeSnippet').textContent;
+      navigator.clipboard.writeText(code).catch(function(){});
+      var btn = document.querySelector('.copy-snippet-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(function() { btn.textContent = 'Copy Snippet'; }, 2000);
+    }
+
+    // Auto-scroll / highlight platform from URL query ?platform=xyz
+    window.addEventListener('DOMContentLoaded', function() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var platform = urlParams.get('platform');
+      if (platform) {
+        var targetEl = document.getElementById('plat-' + platform.toLowerCase());
+        if (targetEl) {
+          setTimeout(function() {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            targetEl.classList.add('highlight');
+          }, 300);
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
