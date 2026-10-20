@@ -88,7 +88,36 @@ npx supabase functions deploy wa-webhook --no-verify-jwt
 
 ---
 
+## 📧 Email & DNS Deliverability Setup (`support@embedease.in`)
+
+To ensure emails from `EmbedEase <no-reply@embedease.in>` and inquiries to `support@embedease.in` achieve 100% inbox placement without spam flags, add the following DNS records in your domain registrar / DNS provider (Cloudflare, GoDaddy, Namecheap):
+
+### 1. Resend API Secret in Supabase
+Set your Resend API key in the Supabase Edge Functions vault:
+```bash
+npx supabase secrets set RESEND_API_KEY=re_1234567890abcdef...
+```
+
+### 2. Required DNS Records for `embedease.in`
+
+| Record Type | Host / Name | Value / Destination | TTL | Purpose |
+|---|---|---|---|---|
+| **TXT** | `@` (or `embedease.in`) | `v=spf1 include:amazonses.com include:resend.com ~all` | 3600 (or Auto) | **SPF**: Authorizes Resend/Amazon SES to send transactional emails on behalf of embedease.in |
+| **CNAME** | `resend._domainkey` | `resend._domainkey.resend.com` | 3600 (or Auto) | **DKIM**: Cryptographic signature validation verifying email authenticity |
+| **TXT** | `_dmarc` | `v=DMARC1; p=none; rua=mailto:support@embedease.in; ruf=mailto:support@embedease.in; pct=100; sp=none; aspf=r;` | 3600 (or Auto) | **DMARC Policy**: Enforces DKIM/SPF alignment & delivers aggregate delivery reports |
+| **MX** | `feedback.embedease.in` | `feedback-smtp.us-east-1.amazonses.com` (Priority: 10) | 3600 (or Auto) | **Custom Return-Path / Bounce Handling**: Processes bounces & spam complaints |
+
+> [!TIP]
+> **Receiving Inbound Emails at `support@embedease.in`**:
+> If using **Cloudflare Email Routing** or **Google Workspace / Zoho Mail** to receive incoming customer replies:
+> - Keep your primary inbound MX records (e.g., Google or Cloudflare MX `isaac.mx.cloudflare.net` Priority 10) pointing to your inbox service.
+> - Include your inbox provider in the SPF TXT record (e.g. `v=spf1 include:_spf.google.com include:amazonses.com ~all`).
+
+---
+
 ## 🛡️ Security Guarantees
 1. **Zero Client Plan Tampering**: `profiles.plan`, `convos_limit`, etc. cannot be updated by client sessions. Updates occur exclusively via validated Razorpay webhooks.
 2. **Attribution-First Data Pipeline**: Visitors record first-touch and last-touch attribution (`utm_*`, `gclid`, `fbclid`, `ctwa_clid`, referrer) preserved into leads and conversation records.
 3. **No Phantom Claims**: Honest pricing formulas, real live cost calculators, transparent platform fees, and verifiable case studies only.
+4. **Honeypot & Rate-Limited Forms**: All web forms include hidden honeypot traps and per-IP sliding rate limits to halt automated scrapers and injection bots.
+

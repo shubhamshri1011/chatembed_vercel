@@ -588,6 +588,17 @@
     .catch(function () {
       btn.textContent = 'Retry →';
       btn.disabled = false;
+      var lf = g('eer-lf');
+      if (lf) {
+        var errDiv = g('eer-lead-err');
+        if (!errDiv) {
+          errDiv = document.createElement('div');
+          errDiv.id = 'eer-lead-err';
+          errDiv.style.cssText = 'font-size:11.5px;color:#b91c1c;margin-top:6px;line-height:1.4;text-align:center;';
+          lf.appendChild(errDiv);
+        }
+        errDiv.innerHTML = 'Submission failed. Please retry or email <a href="mailto:support@embedease.in" style="color:#b91c1c;font-weight:600;text-decoration:underline;">support@embedease.in</a>';
+      }
     });
   }
 

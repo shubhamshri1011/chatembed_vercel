@@ -44,6 +44,9 @@
           </p>
 
           <form id="contactForm" onsubmit="handleContactSubmit(event)" style="display:flex;flex-direction:column;gap:18px;">
+            <!-- Honeypot anti-spam field -->
+            <input type="text" id="website_hp" name="website_hp" style="display:none !important;" tabindex="-1" autocomplete="off">
+
             <div>
               <label for="cName" class="form-label">Full Name</label>
               <input type="text" id="cName" class="form-input" required placeholder="Alex Sharma">
@@ -55,14 +58,22 @@
             </div>
 
             <div>
-              <label for="cPlatform" class="form-label">AI Platform Used</label>
+              <label for="cPhone" class="form-label">Phone / WhatsApp Number</label>
+              <input type="tel" id="cPhone" class="form-input" placeholder="+91 98765 43210">
+            </div>
+
+            <div>
+              <label for="cPlatform" class="form-label">AI Platform / Interest</label>
               <select id="cPlatform" class="form-select">
                 <option value="voiceflow">Voiceflow</option>
                 <option value="botpress">Botpress</option>
                 <option value="flowise">Flowise AI</option>
                 <option value="typebot">Typebot</option>
                 <option value="bland">Bland.ai / Retell AI</option>
-                <option value="other">Custom Webhook / Other</option>
+                <option value="custom_ai">Custom AI Chatbot</option>
+                <option value="whatsapp_marketing">WhatsApp Marketing / API</option>
+                <option value="lead_attribution">Lead Attribution & Performance Ads</option>
+                <option value="other">Other Inquiry</option>
               </select>
             </div>
 
@@ -77,7 +88,11 @@
             </button>
 
             <div id="contactFeedback" style="display:none;padding:12px;border-radius:var(--radius-md);background:var(--accent-soft);border:1px solid var(--accent-border);color:var(--accent);font-size:0.9rem;text-align:center;">
-              Thank you! Your message has been routed to our founder & engineering desk. We'll be in touch shortly.
+              ✓ Thank you! Your message has been saved and forwarded to our engineering team at support@embedease.in. We'll be in touch shortly.
+            </div>
+
+            <div id="contactError" style="display:none;padding:12px;border-radius:var(--radius-md);background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;font-size:0.88rem;text-align:center;">
+              ⚠️ Unable to deliver message automatically. Please try again or email us directly at <a href="mailto:support@embedease.in" style="color:#b91c1c;font-weight:700;text-decoration:underline;">support@embedease.in</a>.
             </div>
           </form>
         </div>
@@ -92,7 +107,7 @@
               <div>
                 <h3 class="heading-sm" style="margin-bottom:4px;">Email Support</h3>
                 <p style="color:var(--muted);font-size:0.9rem;margin-bottom:8px;">Direct line to engineering and billing.</p>
-                <a href="mailto:support@roopya.in" style="color:var(--accent);font-weight:600;font-size:0.95rem;">support@roopya.in</a>
+                <a href="mailto:support@embedease.in" style="color:var(--accent);font-weight:600;font-size:0.95rem;">support@embedease.in</a>
               </div>
             </div>
           </div>
@@ -150,17 +165,58 @@
   <div data-public-footer></div>
 
   <script>
-    function handleContactSubmit(e) {
+    async function handleContactSubmit(e) {
       e.preventDefault();
       var btn = document.getElementById('submitBtn');
       var feedback = document.getElementById('contactFeedback');
-      btn.disabled = true;
-      btn.innerHTML = '<span>Sending message...</span>';
+      var errorBox = document.getElementById('contactError');
       
-      setTimeout(function() {
-        btn.style.display = 'none';
-        feedback.style.display = 'block';
-      }, 700);
+      feedback.style.display = 'none';
+      errorBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<span>Transmitting message...</span>';
+
+      var urlParams = new URLSearchParams(window.location.search);
+      var payload = {
+        form_name: 'contact_page',
+        name: document.getElementById('cName').value.trim(),
+        email: document.getElementById('cEmail').value.trim(),
+        phone: (document.getElementById('cPhone') ? document.getElementById('cPhone').value.trim() : ''),
+        message: document.getElementById('cMessage').value.trim(),
+        extra_fields: {
+          platform: document.getElementById('cPlatform').value
+        },
+        page_url: window.location.href,
+        utm_source: urlParams.get('utm_source') || 'direct',
+        utm_medium: urlParams.get('utm_medium') || '',
+        utm_campaign: urlParams.get('utm_campaign') || '',
+        utm_term: urlParams.get('utm_term') || '',
+        utm_content: urlParams.get('utm_content') || '',
+        gclid: urlParams.get('gclid') || '',
+        fbclid: urlParams.get('fbclid') || '',
+        website_hp: document.getElementById('website_hp').value
+      };
+
+      try {
+        var res = await fetch('https://rlzscyjegyorjpagguhc.supabase.co/functions/v1/notify-inquiry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          btn.style.display = 'none';
+          feedback.style.display = 'block';
+        } else {
+          throw new Error('Server returned ' + res.status);
+        }
+      } catch (err) {
+        console.error('Contact error:', err);
+        btn.disabled = false;
+        btn.innerHTML = '<span>Retry Sending</span> <i data-lucide="send" style="width:16px;height:16px;"></i>';
+        errorBox.style.display = 'block';
+        if (window.EmbedEaseTheme && window.EmbedEaseTheme.refreshIcons) window.EmbedEaseTheme.refreshIcons();
+      }
     }
   </script>
 
