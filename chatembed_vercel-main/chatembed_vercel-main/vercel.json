@@ -49,6 +49,13 @@
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/refund", "destination": "/refund.html" },
-    { "source": "/contact", "destination": "/contact.html" }
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/ai-chatbot-for-website", "destination": "/ai-chatbot-for-website.html" },
+    { "source": "/whatsapp-marketing", "destination": "/whatsapp-marketing.html" },
+    { "source": "/lead-tracking", "destination": "/lead-tracking.html" },
+    { "source": "/google-ads-app-install", "destination": "/google-ads-app-install.html" },
+    { "source": "/meta-ads-management", "destination": "/meta-ads-management.html" },
+    { "source": "/partners", "destination": "/partners.html" },
+    { "source": "/blog", "destination": "/blog.html" }
   ]
 }

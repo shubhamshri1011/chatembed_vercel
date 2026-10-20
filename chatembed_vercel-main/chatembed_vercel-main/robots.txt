@@ -1,6 +1,13 @@
 User-agent: *
 Allow: /
+
+# Exclude authenticated/app paths from indexing
+Disallow: /app
+Disallow: /app.html
+Disallow: /auth
 Disallow: /dashboard
 Disallow: /scratch/
+Disallow: /test-widget.html
+Disallow: /supabase/
 
 Sitemap: https://embedease.in/sitemap.xml
