@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cost Per Lead Tracking & Attribution Dashboard | EmbedEase</title>
+  <meta name="description" content="Accurate cost per lead tracking & multi-touch marketing attribution for India. Track GCLID, FBCLID, and UTMs into real revenue without GA4 data loss.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0E6B4D">
+  
+  <link rel="canonical" href="https://embedease.in/lead-tracking">
+  <link rel="alternate" hreflang="en-IN" href="https://embedease.in/lead-tracking">
+  <link rel="alternate" hreflang="x-default" href="https://embedease.in/lead-tracking">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://embedease.in/lead-tracking">
+  <meta property="og:title" content="Cost Per Lead Tracking & Attribution Dashboard | EmbedEase">
+  <meta property="og:description" content="Eliminate marketing blindspots. Track exact Cost Per Lead (CPL) and Return on Ad Spend across Google Ads, Meta Ads, and WhatsApp funnels.">
+  <meta property="og:image" content="https://embedease.in/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:site_name" content="EmbedEase">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://embedease.in/lead-tracking">
+  <meta name="twitter:title" content="Cost Per Lead Tracking & Attribution Dashboard | EmbedEase">
+  <meta name="twitter:description" content="Eliminate marketing blindspots. Track exact Cost Per Lead (CPL) and Return on Ad Spend across Google Ads, Meta Ads, and WhatsApp funnels.">
+  <meta name="twitter:image" content="https://embedease.in/assets/og-image.jpg">
+
+  <!-- Favicon Icons -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <!-- Preconnect to Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&display=swap">
+
+  <!-- Core Theme CSS -->
+  <link rel="stylesheet" href="/assets/theme.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js" defer></script>
+  <script src="/assets/theme.js" defer></script>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://embedease.in/#organization",
+        "name": "Roopya Technologies",
+        "alternateName": "EmbedEase",
+        "url": "https://embedease.in",
+        "logo": "https://embedease.in/assets/logo.png"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://embedease.in/#website",
+        "url": "https://embedease.in",
+        "name": "EmbedEase"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "EmbedEase Lead Attribution Engine",
+        "operatingSystem": "All modern browsers",
+        "applicationCategory": "BusinessApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "999",
+          "priceCurrency": "INR"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://embedease.in"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Lead Tracking & Attribution",
+            "item": "https://embedease.in/lead-tracking"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why do Google Analytics 4 (GA4) and Meta Ads show conflicting lead numbers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "GA4 relies on client-side session cookies that are frequently erased by browser privacy features (like Apple Safari ITP and iOS 14.5+ prompt blocks), losing 30% to 40% of conversion source data. Meta claims credit using broad view-through windows. EmbedEase uses first-party persistent session storage and server-side capture, recording exact GCLID, FBCLID, and UTM tags directly onto the lead's database record."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does EmbedEase calculate True Cost Per Lead (CPL)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "True CPL is calculated by dividing verified advertising spend for an individual campaign or ad set by the exact count of qualified leads verified by your CRM or sales reps. Unlike agency blended averages that mix cheap bot clicks with real inquiries, EmbedEase gives you granular CPL per keyword, creative, and audience."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can EmbedEase sync attributed leads directly with my CRM or Google Sheets?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Every lead captured via our widget, website forms, or WhatsApp can be instantly synced via native webhooks, Zapier, Make, or n8n into HubSpot, Zoho CRM, Salesforce, LeadSquared, or Google Sheets with all UTM parameters intact."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Lead capture karne ka sahi tareeka kya hai for Indian performance ads?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Static long forms have high friction and poor mobile completion rates. The most effective method is combining an interactive conversational AI widget or 1-tap WhatsApp verification with persistent first-touch attribution. This increases lead volume by 2x to 3x while preserving complete campaign source tracking."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Shared Public Header -->
+  <div data-public-nav data-active-page="solutions"></div>
+
+  <main style="padding-top:clamp(40px, 6vw, 70px);padding-bottom:clamp(60px, 8vw, 100px);">
+    <div class="container">
+
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumb" style="font-size:0.85rem;color:var(--muted);margin-bottom:24px;">
+        <a href="/" style="color:var(--muted);text-decoration:none;">Home</a>
+        <span style="margin:0 8px;">/</span>
+        <span style="color:var(--ink);font-weight:600;">Cost Per Lead Tracking & Attribution</span>
+      </nav>
+
+      <!-- Hero Section -->
+      <section style="max-width:880px;margin-bottom:clamp(40px, 6vw, 70px);">
+        <div class="pill-tag pill-tag-green" style="margin-bottom:16px;">
+          <i data-lucide="bar-chart-3" style="width:14px;height:14px;"></i>
+          First-Party Marketing Attribution Engine
+        </div>
+        <h1 class="heading-xl" style="margin-bottom:20px;line-height:1.15;">
+          Cost Per Lead Tracking & Marketing ROI Dashboard for Indian Businesses
+        </h1>
+        <p class="body-lg" style="color:var(--muted);margin-bottom:28px;">
+          Are you tired of advertising agencies presenting blended reports that hide why your marketing budget isn't translating into closed sales? EmbedEase solves the lead attribution puzzle by tracking every visitor from their initial ad click to final closed deal with first-party persistent cookies and server-side verification.
+        </p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px;">
+          <a href="/app.html" class="btn btn-primary" style="padding:12px 24px;font-size:1rem;">
+            <span>Explore Live Dashboard</span>
+            <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+          </a>
+          <a href="/contact" class="btn btn-secondary" style="padding:12px 24px;font-size:1rem;">
+            <i data-lucide="phone-call" style="width:16px;height:16px;"></i>
+            <span>Get an Attribution Audit</span>
+          </a>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;font-size:0.85rem;color:var(--muted);">
+          <span style="display:flex;align-items:center;gap:6px;">
+            <i data-lucide="check-circle" style="width:16px;height:16px;color:var(--accent);"></i>
+            Bypasses iOS 14.5+ cookie restrictions
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <i data-lucide="check-circle" style="width:16px;height:16px;color:var(--accent);"></i>
+            Stores GCLID & FBCLID permanently
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <i data-lucide="check-circle" style="width:16px;height:16px;color:var(--accent);"></i>
+            Works with Google, Meta, & Hotstar Ads
+          </span>
+        </div>
+      </section>
+
+      <!-- The Attribution Problem -->
+      <section style="margin-bottom:clamp(50px, 7vw, 90px);">
+        <div class="grid grid-3" style="gap:24px;">
+          
+          <div class="card" style="padding:32px;">
+            <div style="width:44px;height:44px;border-radius:var(--radius-md);background:#fef2f2;color:#b91c1c;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+              <i data-lucide="eye-off" style="width:22px;height:22px;"></i>
+            </div>
+            <h2 class="heading-sm" style="margin-bottom:10px;">The GA4 Data Black Hole</h2>
+            <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;">
+              Safari ITP (Intelligent Tracking Prevention) caps client-side cookies at 24 hours. When a user sees your ad on Monday, researches your competitors, and returns on Thursday to submit a lead, GA4 marks them as "Direct / None". You end up pausing high-performing ad campaigns by mistake.
+            </p>
+          </div>
+
+          <div class="card" style="padding:32px;">
+            <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--amber-soft);color:var(--amber);display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+              <i data-lucide="percent" style="width:22px;height:22px;"></i>
+            </div>
+            <h2 class="heading-sm" style="margin-bottom:10px;">Blended CPL Deception</h2>
+            <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;">
+              Traditional digital agencies aggregate brand search queries with broad social media campaigns into a single "Blended CPL of ₹250". In reality, your brand keywords cost ₹40 while your cold campaigns were hemorrhaging ₹1,200 per fake lead with zero sales follow-through.
+            </p>
+          </div>
+
+          <div class="card" style="padding:32px;">
+            <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+              <i data-lucide="check-check" style="width:22px;height:22px;"></i>
+            </div>
+            <h2 class="heading-sm" style="margin-bottom:10px;">First-Touch & Last-Touch Clarity</h2>
+            <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;">
+              EmbedEase logs both the first touchpoint that introduced the prospect and the last touchpoint that triggered the inquiry. Tie closed revenue back to the exact ad creative that created the initial awareness.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Live ROI Dashboard Preview -->
+      <section style="background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-lg);padding:clamp(32px, 5vw, 60px);margin-bottom:clamp(50px, 7vw, 90px);">
+        <div style="max-width:840px;margin:0 auto;">
+          <h2 class="heading-lg" style="margin-bottom:16px;text-align:center;">
+            What a Real Lead Attribution Tool Looks Like
+          </h2>
+          <p style="color:var(--muted);text-align:center;line-height:1.7;margin-bottom:32px;">
+            Inside your EmbedEase console, every lead card contains verifiable advertising metadata linked to actual closed revenue:
+          </p>
+
+          <div style="overflow-x:auto;">
+            <table class="table" style="width:100%;background:#FFF;border:1px solid var(--border);border-radius:var(--radius-md);">
+              <thead>
+                <tr>
+                  <th style="padding:14px;text-align:left;">Customer Name</th>
+                  <th style="padding:14px;text-align:left;">First Touch Ad</th>
+                  <th style="padding:14px;text-align:left;">Last Touch Channel</th>
+                  <th style="padding:14px;text-align:left;">Ad Click ID</th>
+                  <th style="padding:14px;text-align:left;color:var(--accent);">True CPL</th>
+                  <th style="padding:14px;text-align:left;">Deal Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding:14px;font-weight:600;">Rajesh Kumar</td>
+                  <td style="padding:14px;font-size:0.88rem;">Meta: Reels_Founder_Story</td>
+                  <td style="padding:14px;font-size:0.88rem;"><a href="/ai-chatbot-for-website" style="color:var(--accent);text-decoration:underline;">Website Chatbot</a></td>
+                  <td style="padding:14px;font-size:0.8rem;color:var(--muted);">FBCLID: IwAR2...</td>
+                  <td style="padding:14px;font-weight:700;color:var(--accent);">₹312</td>
+                  <td style="padding:14px;"><span class="badge badge-green">Won (₹45,000)</span></td>
+                </tr>
+                <tr>
+                  <td style="padding:14px;font-weight:600;">Sneha Patel</td>
+                  <td style="padding:14px;font-size:0.88rem;">Google: App_Install_Tier1</td>
+                  <td style="padding:14px;font-size:0.88rem;"><a href="/google-ads-app-install" style="color:var(--accent);text-decoration:underline;">Firebase App Open</a></td>
+                  <td style="padding:14px;font-size:0.8rem;color:var(--muted);">GCLID: Cj0KCQ...</td>
+                  <td style="padding:14px;font-weight:700;color:var(--accent);">₹185</td>
+                  <td style="padding:14px;"><span class="badge badge-amber">Trial Active</span></td>
+                </tr>
+                <tr>
+                  <td style="padding:14px;font-weight:600;">Anand Verma</td>
+                  <td style="padding:14px;font-size:0.88rem;">Meta: CTWA_Festival_Offer</td>
+                  <td style="padding:14px;font-size:0.88rem;"><a href="/whatsapp-marketing" style="color:var(--accent);text-decoration:underline;">WhatsApp Cloud API</a></td>
+                  <td style="padding:14px;font-size:0.8rem;color:var(--muted);">CTWA: 99421...</td>
+                  <td style="padding:14px;font-weight:700;color:var(--accent);">₹94</td>
+                  <td style="padding:14px;"><span class="badge badge-green">Won (₹12,500)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Practical Guide with natural Hinglish -->
+      <section style="max-width:800px;margin:0 auto clamp(50px, 7vw, 90px);">
+        <h2 class="heading-lg" style="margin-bottom:16px;">
+          Lead capture karne ka sahi tareeka: 4 Rules for Maximum Ad ROI
+        </h2>
+        <p style="color:var(--muted);line-height:1.7;margin-bottom:28px;">
+          Agar aap Google Ads aur Meta Ads chala rahe hain, do not rely on standard static landing page forms alone. Follow this battle-tested playbook:
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div style="display:flex;gap:18px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--accent);color:#FFF;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">1</div>
+            <div>
+              <h3 class="heading-sm" style="margin-bottom:6px;">Persist URL Parameters in Local Session</h3>
+              <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;">When a user lands with <code>?utm_source=meta&utm_campaign=diwali_sale</code>, standard pages drop the tags when the user navigates to the "Pricing" or "About Us" page. EmbedEase saves these parameters immediately so you never lose attribution.</p>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:18px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--accent);color:#FFF;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">2</div>
+            <div>
+              <h3 class="heading-sm" style="margin-bottom:6px;">Verify Phone Numbers via WhatsApp One-Tap</h3>
+              <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;">Spam and fake 10-digit phone numbers waste hours of your sales team’s time. Offer visitors an instant WhatsApp document delivery or quote option to guarantee phone validity.</p>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:18px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--accent);color:#FFF;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">3</div>
+            <div>
+              <h3 class="heading-sm" style="margin-bottom:6px;">Calculate True CPL vs Agency Blended Reports</h3>
+              <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;">Separate your brand traffic (repeat customers searching your name) from non-brand cold ad traffic. If cold campaign CPL exceeds your customer gross margin, optimize targeting immediately.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section style="max-width:760px;margin:0 auto clamp(50px, 7vw, 90px);">
+        <h2 class="heading-lg" style="margin-bottom:28px;text-align:center;">Frequently Asked Questions</h2>
+        
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="card" style="padding:24px;">
+            <h3 class="heading-sm" style="margin-bottom:8px;">Why do Google Analytics 4 (GA4) and Meta Ads show conflicting lead numbers?</h3>
+            <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;margin:0;">
+              GA4 relies on client-side session cookies that are frequently erased by browser privacy features (like Apple Safari ITP and iOS 14.5+ prompt blocks), losing 30% to 40% of conversion source data. Meta claims credit using broad view-through windows. EmbedEase uses first-party persistent session storage and server-side capture, recording exact GCLID, FBCLID, and UTM tags directly onto the lead's database record.
+            </p>
+          </div>
+
+          <div class="card" style="padding:24px;">
+            <h3 class="heading-sm" style="margin-bottom:8px;">How does EmbedEase calculate True Cost Per Lead (CPL)?</h3>
+            <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;margin:0;">
+              True CPL is calculated by dividing verified advertising spend for an individual campaign or ad set by the exact count of qualified leads verified by your CRM or sales reps. Unlike agency blended averages that mix cheap bot clicks with real inquiries, EmbedEase gives you granular CPL per keyword, creative, and audience.
+            </p>
+          </div>
+
+          <div class="card" style="padding:24px;">
+            <h3 class="heading-sm" style="margin-bottom:8px;">Can EmbedEase sync attributed leads directly with my CRM or Google Sheets?</h3>
+            <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;margin:0;">
+              Yes. Every lead captured via our widget, website forms, or WhatsApp can be instantly synced via native webhooks, Zapier, Make, or n8n into HubSpot, Zoho CRM, Salesforce, LeadSquared, or Google Sheets with all UTM parameters intact.
+            </p>
+          </div>
+
+          <div class="card" style="padding:24px;">
+            <h3 class="heading-sm" style="margin-bottom:8px;">Lead capture karne ka sahi tareeka kya hai for Indian performance ads?</h3>
+            <p style="color:var(--muted);font-size:0.92rem;line-height:1.6;margin:0;">
+              Static long forms have high friction and poor mobile completion rates. The most effective method is combining an interactive conversational AI widget or 1-tap WhatsApp verification with persistent first-touch attribution. This increases lead volume by 2x to 3x while preserving complete campaign source tracking.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Banner -->
+      <section style="background:var(--dark-bg);color:var(--dark-text);border-radius:var(--radius-lg);padding:clamp(32px, 5vw, 60px);text-align:center;">
+        <div style="max-width:620px;margin:0 auto;">
+          <h2 style="font-family:var(--font-serif);font-size:clamp(1.8rem, 3.5vw, 2.4rem);font-weight:600;margin-bottom:14px;color:#F6F4EF;">
+            Stop Flying Blind on Your Digital Ad Spend
+          </h2>
+          <p style="color:#A3ADA7;font-size:1rem;line-height:1.6;margin-bottom:28px;">
+            Connect your website in 10 minutes. Track exact cost-per-lead, prevent wasted ad rupees, and double your sales team’s pipeline.
+          </p>
+          <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;">
+            <a href="/app.html" class="btn btn-primary" style="padding:12px 28px;font-size:1rem;">
+              <span>Deploy Attribution Dashboard</span>
+              <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+            </a>
+            <a href="/pricing" class="btn btn-ghost" style="border:1px solid rgba(255,255,255,0.2);color:#F6F4EF;padding:12px 28px;font-size:1rem;">
+              <span>View Transparent Plans</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Shared Public Footer -->
+  <div data-public-footer></div>
+
+</body>
+</html>
