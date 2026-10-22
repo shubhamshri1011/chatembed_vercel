@@ -2,35 +2,28 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { corsHeaders } from '../_shared/cors.ts';
 
-const BATCH_SIZE = 50;     // messages per batch to stay within Meta rate limits
-const BATCH_DELAY_MS = 1000; // 1 second between batches
-
-interface RecipientRow {
-  phone: string;
-  name?: string;
-  [key: string]: string | undefined;
-}
+const CHUNK_SIZE = 50; // process 50 recipients per invocation to prevent Edge Function timeout
 
 serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  const supabaseUrl  = Deno.env.get('SUPABASE_URL') ?? '';
-  const serviceKey   = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-  const supabase     = createClient(supabaseUrl, serviceKey);
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+  const serviceKey  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  const supabase    = createClient(supabaseUrl, serviceKey);
 
   try {
-    // ── Auth ─────────────────────────────────────────────────
+    // ── 1. Require JWT & Verify Campaign Ownership ──────────────
     const authHeader = req.headers.get('Authorization') ?? '';
     const jwt = authHeader.replace('Bearer ', '');
     const { data: { user }, error: authErr } = await supabase.auth.getUser(jwt);
-    if (authErr || !user) return json({ error: 'Unauthorized' }, 401);
+    if (authErr || !user) {
+      return json({ error: 'Unauthorized' }, 401);
+    }
 
     const body = await req.json();
-    const { campaign_id, dry_run } = body;
-
+    const { campaign_id } = body;
     if (!campaign_id) return json({ error: 'campaign_id required' }, 400);
 
-    // ── Load campaign ─────────────────────────────────────────
     const { data: campaign, error: campErr } = await supabase
       .from('wa_campaigns')
       .select('*, wa_templates(*), wa_numbers(*)')
@@ -39,152 +32,178 @@ serve(async (req: Request) => {
       .single();
 
     if (campErr || !campaign) return json({ error: 'Campaign not found' }, 404);
-    if (!['draft','scheduled'].includes(campaign.status)) {
-      return json({ error: `Campaign status is "${campaign.status}" — cannot send` }, 400);
+    if (['sent', 'failed'].includes(campaign.status)) {
+      return json({ error: `Campaign status is '${campaign.status}' — already finished.` }, 400);
     }
 
-    const waNumber: { access_token: string; phone_number_id: string } = campaign.wa_numbers;
-    const template: { name: string; language: string; components: unknown[] } = campaign.wa_templates;
+    // ── 2. Check Plan Limits ────────────────────────────────────
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan, convos_used, convos_limit')
+      .eq('id', user.id)
+      .single();
 
-    if (!waNumber?.access_token) return json({ error: 'No WhatsApp number connected' }, 400);
-    if (!template?.name) return json({ error: 'No template attached to campaign' }, 400);
+    const limit = profile?.convos_limit || 100;
+    const used  = profile?.convos_used || 0;
+    if (used >= limit) {
+      return json({
+        error: `Monthly conversation limit reached (${used}/${limit}). Please upgrade your plan before broadcasting.`
+      }, 403);
+    }
 
-    // ── Load opted-in recipients ──────────────────────────────
-    const { data: optIns } = await supabase
+    // ── 3. Check WhatsApp Number & Approved Template ─────────────
+    const waNumber = campaign.wa_numbers;
+    const template = campaign.wa_templates;
+
+    if (!waNumber?.access_token || !waNumber?.phone_number_id) {
+      return json({ error: 'No active WhatsApp number credentials connected.' }, 400);
+    }
+
+    if (!template?.name) {
+      return json({ error: 'No template attached to campaign.' }, 400);
+    }
+
+    // Requirement 6: Block sending of non-approved templates
+    if (template.status !== 'APPROVED') {
+      return json({
+        error: `Template '${template.name}' is '${template.status}'. Only APPROVED templates can be broadcast.`
+      }, 400);
+    }
+
+    // ── 4. Load Opted-in Recipients with Resumable Pagination ────
+    const lastProcessedIndex = campaign.last_processed_index || 0;
+
+    const { data: optIns, count: totalOptIns } = await supabase
       .from('wa_opt_ins')
-      .select('phone')
+      .select('phone', { count: 'exact' })
       .eq('user_id', user.id)
-      .eq('status', 'opted_in');
+      .eq('status', 'opted_in')
+      .order('opted_in_at', { ascending: true })
+      .range(lastProcessedIndex, lastProcessedIndex + CHUNK_SIZE - 1);
 
-    const recipients: RecipientRow[] = (optIns ?? []).map((r: { phone: string }) => ({ phone: r.phone }));
+    if (!optIns || optIns.length === 0) {
+      await supabase.from('wa_campaigns').update({
+        status: 'sent',
+        updated_at: new Date().toISOString()
+      }).eq('id', campaign_id);
 
-    if (recipients.length === 0) {
-      return json({ error: 'No opted-in recipients. Upload contacts and get opt-in first.' }, 400);
-    }
-
-    if (dry_run) {
-      return json({ dry_run: true, recipients_count: recipients.length, campaign_id });
-    }
-
-    // ── Mark campaign as sending ──────────────────────────────
-    await supabase.from('wa_campaigns')
-      .update({ status: 'sending', recipients_total: recipients.length, updated_at: new Date().toISOString() })
-      .eq('id', campaign_id);
-
-    // ── Send in batches ───────────────────────────────────────
-    let sentCount = 0, failedCount = 0;
-
-    for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
-      const batch = recipients.slice(i, i + BATCH_SIZE);
-
-      const results = await Promise.allSettled(
-        batch.map(r => sendWhatsAppMessage(waNumber, template, r, campaign.template_vars))
-      );
-
-      const messageRows = results.map((result, idx) => {
-        const phone = batch[idx].phone;
-        const success = result.status === 'fulfilled' && result.value.ok;
-        const waId = success ? (result.value as { wamid?: string }).wamid : undefined;
-        if (success) sentCount++; else failedCount++;
-
-        return {
-          user_id: user.id,
-          campaign_id,
-          to_phone: phone,
-          wa_message_id: waId ?? null,
-          direction: 'outbound',
-          category: template.name?.toLowerCase().includes('util') ? 'utility' : 'marketing',
-          status: success ? 'sent' : 'failed',
-          body_preview: `[Template: ${template.name}]`,
-          error_message: !success && result.status === 'rejected' ? String(result.reason) : null,
-        };
+      return json({
+        status: 'completed',
+        message: 'All recipients processed.',
+        total: totalOptIns || 0,
+        processed: lastProcessedIndex
       });
+    }
 
-      await supabase.from('wa_messages').insert(messageRows);
+    // Mark campaign as sending
+    await supabase.from('wa_campaigns').update({
+      status: 'sending',
+      recipients_total: totalOptIns || optIns.length,
+      updated_at: new Date().toISOString()
+    }).eq('id', campaign_id);
 
-      // Update campaign counts after each batch
-      await supabase.from('wa_campaigns')
-        .update({ sent_count: sentCount, failed_count: failedCount, updated_at: new Date().toISOString() })
-        .eq('id', campaign_id);
+    // ── 5. Dispatch Chunk to Meta ───────────────────────────────
+    let sentInBatch = 0;
+    let failedInBatch = 0;
+    const vars = campaign.template_vars || {};
 
-      // Rate limit pause between batches
-      if (i + BATCH_SIZE < recipients.length) {
-        await new Promise(r => setTimeout(r, BATCH_DELAY_MS));
+    for (const r of optIns) {
+      // Build components parameters if vars provided
+      const parameters: any[] = [];
+      if (vars.var1) parameters.push({ type: 'text', text: vars.var1 });
+      if (vars.var2) parameters.push({ type: 'text', text: vars.var2 });
+
+      const metaPayload = {
+        messaging_product: 'whatsapp',
+        to: r.phone.replace(/[^0-9]/g, ''),
+        type: 'template',
+        template: {
+          name: template.name,
+          language: { code: template.language || 'en' },
+          components: parameters.length > 0 ? [{ type: 'body', parameters }] : undefined
+        }
+      };
+
+      try {
+        const metaRes = await fetch(
+          `https://graph.facebook.com/v21.0/${waNumber.phone_number_id}/messages`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${waNumber.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(metaPayload),
+          }
+        );
+
+        const metaData = await metaRes.json();
+        const wamid = metaData.messages?.[0]?.id;
+
+        if (metaRes.ok && wamid) {
+          sentInBatch++;
+          await supabase.from('wa_messages').insert({
+            user_id: user.id,
+            campaign_id: campaign.id,
+            wa_message_id: wamid,
+            direction: 'outbound',
+            phone: r.phone,
+            to_phone: r.phone,
+            category: template.category?.toLowerCase() || 'marketing',
+            status: 'sent',
+            billable: true,
+            cost: template.category === 'UTILITY' ? 0.31 : 0.78,
+            body_preview: `${template.name} [template]`,
+            ts: new Date().toISOString()
+          });
+        } else {
+          failedInBatch++;
+          await supabase.from('wa_messages').insert({
+            user_id: user.id,
+            campaign_id: campaign.id,
+            direction: 'outbound',
+            phone: r.phone,
+            to_phone: r.phone,
+            status: 'failed',
+            error_code: String(metaData.error?.code || 'UNKNOWN'),
+            error_message: metaData.error?.message || 'Meta API error',
+            ts: new Date().toISOString()
+          });
+        }
+      } catch (e: any) {
+        failedInBatch++;
       }
     }
 
-    // ── Finalise campaign ─────────────────────────────────────
-    await supabase.from('wa_campaigns')
-      .update({ status: 'sent', sent_count: sentCount, failed_count: failedCount, updated_at: new Date().toISOString() })
-      .eq('id', campaign_id);
+    // Increment user convos_used
+    await supabase.from('profiles').update({
+      convos_used: used + sentInBatch,
+      updated_at: new Date().toISOString()
+    }).eq('id', user.id);
 
-    return json({ success: true, sent: sentCount, failed: failedCount, total: recipients.length });
+    const newIndex = lastProcessedIndex + optIns.length;
+    const isFinished = newIndex >= (totalOptIns || 0);
 
-  } catch (err) {
-    console.error('wa-send error:', err);
-    return json({ error: 'Internal error', detail: String(err) }, 500);
+    await supabase.from('wa_campaigns').update({
+      last_processed_index: newIndex,
+      sent_count: (campaign.sent_count || 0) + sentInBatch,
+      failed_count: (campaign.failed_count || 0) + failedInBatch,
+      status: isFinished ? 'sent' : 'sending',
+      updated_at: new Date().toISOString()
+    }).eq('id', campaign_id);
+
+    return json({
+      status: isFinished ? 'completed' : 'in_progress',
+      batch_sent: sentInBatch,
+      batch_failed: failedInBatch,
+      processed: newIndex,
+      total: totalOptIns || 0,
+      remaining: Math.max(0, (totalOptIns || 0) - newIndex)
+    });
+  } catch (err: any) {
+    return json({ error: err.message }, 500);
   }
 });
-
-// ── Helpers ───────────────────────────────────────────────────
-
-async function sendWhatsAppMessage(
-  waNumber: { access_token: string; phone_number_id: string },
-  template: { name: string; language: string; components: unknown[] },
-  recipient: RecipientRow,
-  templateVars: Record<string, string>
-): Promise<{ ok: boolean; wamid?: string }> {
-  const phone = recipient.phone.replace(/[^0-9]/g, '');
-
-  const payload = {
-    messaging_product: 'whatsapp',
-    to: phone,
-    type: 'template',
-    template: {
-      name: template.name,
-      language: { code: template.language || 'en' },
-      components: buildComponents(template.components, recipient, templateVars),
-    },
-  };
-
-  const res = await fetch(
-    `https://graph.facebook.com/v19.0/${waNumber.phone_number_id}/messages`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${waNumber.access_token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    }
-  );
-
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data?.error?.message ?? `Meta API ${res.status}`);
-  }
-  return { ok: true, wamid: data?.messages?.[0]?.id };
-}
-
-function buildComponents(
-  components: unknown[],
-  recipient: RecipientRow,
-  vars: Record<string, string>
-): unknown[] {
-  // Simple variable substitution: {{1}} → vars['1'] or recipient.name etc.
-  return (components as Array<Record<string,unknown>>).map((comp) => {
-    if (comp.type === 'body' && Array.isArray(comp.parameters)) {
-      return {
-        ...comp,
-        parameters: (comp.parameters as Array<Record<string,unknown>>).map((p, idx) => ({
-          type: 'text',
-          text: vars[String(idx + 1)] ?? recipient.name ?? p.text ?? '',
-        })),
-      };
-    }
-    return comp;
-  });
-}
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {

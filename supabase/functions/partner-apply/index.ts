@@ -20,7 +20,7 @@ serve(async (req: Request) => {
 
     if (!business_name) return json({ error: 'business_name required' }, 400);
 
-    // Sanitise and generate unique ref_code from business name
+    // Sanitise and generate unique referral_code from business name
     const baseCode = ref_code_requested
       ? ref_code_requested.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 12)
       : business_name.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 8);
@@ -29,21 +29,33 @@ serve(async (req: Request) => {
     const refCode = `${baseCode}${suffix}`;
 
     // Check if user already applied
-    const { data: existing } = await supabase.from('partners').select('id').eq('user_id', user.id).single();
-    if (existing) return json({ error: 'You have already applied for the partner program.', status: 'already_applied' }, 409);
+    const { data: existing } = await supabase
+      .from('partners')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
 
-    // Insert partner application (status: pending)
+    if (existing) {
+      return json({ error: 'You have already applied for the partner program.', status: 'already_applied' }, 409);
+    }
+
+    // Insert partner application using canonical column names
     const { data: partner, error: insertErr } = await supabase.from('partners').insert({
       user_id: user.id,
-      business_name,
-      contact_phone: contact_phone ?? null,
+      referral_code: refCode,
       ref_code: refCode,
+      brand_name: business_name,
+      business_name: business_name,
+      contact_phone: contact_phone ?? null,
+      commission_rate: 20.00,
+      commission_pct: 20.00,
       status: 'pending',
+      notes: message ?? null,
     }).select().single();
 
     if (insertErr) {
       console.error('partner insert error:', insertErr);
-      return json({ error: 'Failed to submit application. Please try again.' }, 500);
+      return json({ error: 'Failed to submit application: ' + insertErr.message }, 500);
     }
 
     // Notify admin via Resend
@@ -61,24 +73,24 @@ serve(async (req: Request) => {
             `Business: ${business_name}`,
             `Phone: ${contact_phone ?? 'N/A'}`,
             `Email: ${user.email}`,
-            `Ref Code (auto): ${refCode}`,
+            `Referral Code: ${refCode}`,
+            `Commission: 20% recurring MRR`,
             `Message: ${message ?? 'N/A'}`,
-            `Partner ID: ${partner.id}`,
-            `Review at: https://embedease.in/app#admin`,
+            `Timestamp: ${new Date().toISOString()}`,
           ].join('\n'),
         }),
-      });
+      }).catch(e => console.warn('Resend notification failed:', e));
     }
 
     return json({
-      success: true,
-      ref_code: refCode,
-      message: 'Application submitted! We will review and contact you within 24 hours.',
-    });
+      status: 'submitted',
+      referral_code: refCode,
+      partner_id: partner.id,
+      message: 'Application received. We will review and activate your dashboard within 24 hours.'
+    }, 201);
 
-  } catch (err) {
-    console.error('partner-apply error:', err);
-    return json({ error: 'Internal error' }, 500);
+  } catch (err: any) {
+    return json({ error: err.message }, 500);
   }
 });
 

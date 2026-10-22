@@ -1,4 +1,4 @@
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+﻿import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import { hmac } from 'https://deno.land/x/hmac@v2.0.1/mod.ts';
 
@@ -19,7 +19,7 @@ serve(async (req) => {
     const signature = req.headers.get('x-razorpay-signature');
     const rawBody = await req.text();
 
-    // Verify signature if secret is configured
+    // 1. Verify signature if secret is configured
     if (webhookSecret) {
       if (!signature) {
         return new Response(JSON.stringify({ error: 'Missing signature' }), { status: 400 });
@@ -33,7 +33,11 @@ serve(async (req) => {
     const payload = JSON.parse(rawBody);
     const event = payload.event;
 
-    // Only process successful payment events
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // ── 2. Handle Successful Payment Events ──────────────────────
     if (event === 'payment.captured' || event === 'order.paid') {
       const paymentEntity = payload.payload?.payment?.entity;
       const notes = paymentEntity?.notes || payload.payload?.order?.entity?.notes || {};
@@ -51,11 +55,7 @@ serve(async (req) => {
         return new Response(JSON.stringify({ status: 'ignored_missing_user' }), { status: 200 });
       }
 
-      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-      // 1. Record payment in public.payments
+      // Record payment in public.payments
       const { data: paymentRecord, error: payError } = await supabase
         .from('payments')
         .insert({
@@ -75,7 +75,7 @@ serve(async (req) => {
         console.error('Error inserting payment record:', payError);
       }
 
-      // 2. Upgrade user profile plan & limits (Service Role allows update)
+      // Upgrade user profile plan & reset limits
       const convosLimit = PLAN_LIMITS[plan.toLowerCase()] || 1000;
       await supabase
         .from('profiles')
@@ -83,29 +83,69 @@ serve(async (req) => {
           plan: plan,
           plan_status: 'active',
           convos_limit: convosLimit,
-          convos_used: 0, // Reset usage counter on successful cycle
+          convos_used: 0,
           razorpay_id: paymentId,
           updated_at: new Date().toISOString(),
         })
         .eq('id', userId);
 
-      // 3. Check for partner commission attribution
+      // Check for partner client attribution
       const { data: partnerClient } = await supabase
         .from('partner_clients')
-        .select('partner_id, partners(commission_rate)')
-        .eq('client_id', userId)
-        .single();
+        .select('partner_id, partners(id, commission_rate, referral_code)')
+        .or(`client_id.eq.${userId},client_user_id.eq.${userId}`)
+        .maybeSingle();
 
       if (partnerClient && paymentRecord?.id) {
-        const rate = (partnerClient.partners as any)?.commission_rate || 20.0;
+        const partner = partnerClient.partners as any;
+        const rate = Number(partner?.commission_rate || 20.0);
         const commissionAmount = (amountRupees * rate) / 100;
 
         await supabase.from('commissions').insert({
           partner_id: partnerClient.partner_id,
           payment_id: paymentRecord.id,
           amount: commissionAmount,
+          commission_amount: commissionAmount,
+          subscription_amount: amountRupees,
+          commission_rate: rate,
+          client_user_id: userId,
           status: 'pending',
+          created_at: new Date().toISOString(),
         });
+
+        console.log(`Commission created: ₹${commissionAmount} for partner ${partnerClient.partner_id}`);
+      }
+    }
+
+    // ── 3. Handle Refund Events (Requirement 8) ──────────────────
+    if (event === 'refund.processed' || event === 'payment.refunded' || event === 'refund.created') {
+      const refundEntity = payload.payload?.refund?.entity || payload.payload?.payment?.entity;
+      const paymentId = refundEntity?.payment_id || refundEntity?.id;
+
+      if (paymentId) {
+        // Find payment record
+        const { data: paymentRecord } = await supabase
+          .from('payments')
+          .select('id, user_id')
+          .eq('razorpay_payment_id', paymentId)
+          .maybeSingle();
+
+        if (paymentRecord) {
+          // Mark payment refunded
+          await supabase.from('payments')
+            .update({ status: 'refunded' })
+            .eq('id', paymentRecord.id);
+
+          // Reverse any associated commissions
+          await supabase.from('commissions')
+            .update({
+              status: 'cancelled',
+              payout_ref: 'REVERSED_DUE_TO_REFUND',
+            })
+            .eq('payment_id', paymentRecord.id);
+
+          console.log(`Commission reversed on refund for payment ${paymentId}`);
+        }
       }
     }
 

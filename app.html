@@ -2322,30 +2322,32 @@ async function saveWhatsAppConfig() {
   }
 
   try {
-    if (activeWaNumber?.id) {
-      await sb.from('wa_numbers').update({
+    const session = (await sb.auth.getSession())?.data?.session;
+    const jwt = session?.access_token || '';
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/wa-connect`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      },
+      body: JSON.stringify({
         phone_number_id: phoneId,
         waba_id: wabaId,
         display_phone: display,
-        access_token: token,
-        status: 'active'
-      }).eq('id', activeWaNumber.id);
-    } else {
-      await sb.from('wa_numbers').insert({
-        user_id: currentUser.id,
-        phone_number_id: phoneId,
-        waba_id: wabaId,
-        display_phone: display,
-        access_token: token,
-        status: 'active'
-      });
-    }
+        access_token: token
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to save credentials');
 
     document.getElementById('wa-connect-modal').style.display = 'none';
+    document.getElementById('wa-cfg-token').value = '';
     showToast('WhatsApp connected successfully!');
     await loadWhatsAppTab();
   } catch(e) {
-    showToast('Failed to save WhatsApp config: ' + e.message, 'error');
+    showToast(e.message, 'error');
   }
 }
 
@@ -2398,21 +2400,57 @@ async function saveWaTemplate() {
   }
 
   try {
-    await sb.from('wa_templates').insert({
-      user_id: currentUser.id,
-      wa_number_id: activeWaNumber?.id || null,
-      name,
-      category: cat,
-      language: lang,
-      status: 'APPROVED',
-      components: [{ type: 'BODY', text: body }]
+    const session = (await sb.auth.getSession())?.data?.session;
+    const jwt = session?.access_token || '';
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/wa-template`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      },
+      body: JSON.stringify({
+        action: 'create',
+        name,
+        category: cat,
+        language: lang,
+        components: [{ type: 'BODY', text: body }]
+      })
     });
 
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Template submission failed');
+
     closeWaTemplateModal();
-    showToast('Template saved and ready!');
+    showToast('Template submitted to Meta for review!');
     await loadWaTemplates();
   } catch(e) {
-    showToast('Error saving template: ' + e.message, 'error');
+    showToast(e.message, 'error');
+  }
+}
+
+async function syncWaTemplatesWithMeta() {
+  try {
+    showToast('Syncing approval status with Meta...');
+    const session = (await sb.auth.getSession())?.data?.session;
+    const jwt = session?.access_token || '';
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/wa-template`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      },
+      body: JSON.stringify({ action: 'sync' })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Sync failed');
+
+    showToast(`Synced ${data.synced || 0} template(s) with Meta!`);
+    await loadWaTemplates();
+  } catch(e) {
+    showToast(e.message, 'error');
   }
 }
 
@@ -2525,8 +2563,13 @@ function openWaCampaignModal() {
     return;
   }
   const select = document.getElementById('wa-camp-template');
-  select.innerHTML = '<option value="">Select a template...</option>' +
-    waTemplatesList.map(t => `<option value="${t.id}">${t.name} (${t.category})</option>`).join('');
+  const approved = waTemplatesList.filter(t => t.status === 'APPROVED');
+  if (approved.length === 0) {
+    showToast('No APPROVED Meta templates available. Create a template and wait for Meta approval, or click Sync Meta.', 'error');
+    return;
+  }
+  select.innerHTML = '<option value="">Select an approved template...</option>' +
+    approved.map(t => `<option value="${t.id}">${t.name} (${t.category}) - Approved</option>`).join('');
 
   document.getElementById('wa-camp-recipient-count').textContent = waOptInsCount;
   document.getElementById('wa-camp-name').value = '';
@@ -2593,8 +2636,13 @@ async function triggerSendCampaign(campaignId) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Broadcast failed');
 
-    showToast(`Campaign broadcast complete! Total queued: ${data.total_queued || 0}`);
-    await loadWhatsAppTab();
+    if (data.status === 'in_progress') {
+      showToast(`Batch sent (${data.processed}/${data.total}). Continuing next chunk...`);
+      setTimeout(() => triggerSendCampaign(campaignId), 1200);
+    } else {
+      showToast(`Campaign broadcast completed! (${data.total || data.processed || 0} sent)`);
+      await loadWhatsAppTab();
+    }
   } catch(e) {
     showToast('Campaign send error: ' + e.message, 'error');
     await loadWhatsAppTab();
@@ -2811,10 +2859,24 @@ async function loadAdminPartners() {
 
 async function updatePartnerStatus(partnerId, newStatus) {
   try {
-    await sb.from('partners').update({
-      status: newStatus,
-      approved_at: newStatus === 'active' ? new Date().toISOString() : null
-    }).eq('id', partnerId);
+    const session = (await sb.auth.getSession())?.data?.session;
+    const jwt = session?.access_token || '';
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-action`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      },
+      body: JSON.stringify({
+        action: 'update_partner',
+        partner_id: partnerId,
+        status: newStatus
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to update partner');
 
     showToast(`Partner status updated to ${newStatus}`);
     await loadAdminPartners();
@@ -2833,9 +2895,13 @@ async function loadAdminRates() {
     }
 
     listEl.innerHTML = rates.map(r => `
-      <div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.85rem">
-        <span style="text-transform:capitalize;font-weight:600">${r.category}</span>
-        <span>₹${Number(r.rate_inr).toFixed(2)} + ₹${Number(r.platform_fee_inr || 0.05).toFixed(2)} fee</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.85rem">
+        <div>
+          <span style="text-transform:capitalize;font-weight:600">${r.category}</span>
+          ${r.is_estimate ? '<span style="font-size:.68rem;margin-left:.35rem;color:var(--brand2);border:1px solid var(--brand2);padding:1px 5px;border-radius:4px">Estimate</span>' : ''}
+          <div style="font-size:.72rem;color:var(--muted)">Effective: ${r.effective_from || 'Jan 2026'} ${r.category === 'service' ? '&bull; Free within 24h window' : ''}</div>
+        </div>
+        <span style="font-weight:600">${r.category === 'service' ? 'FREE' : `₹${Number(r.rate_inr).toFixed(2)} + ₹${Number(r.platform_fee_inr || 0.05).toFixed(2)} fee`}</span>
       </div>
     `).join('');
   } catch(e) { console.warn('loadAdminRates:', e); }
