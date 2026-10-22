@@ -1228,6 +1228,7 @@ function selPlan(el) {
 
 async function completeSignup() {
   setBtn('s3Btn','s3Sp','s3Txt', true);
+  const refCode = localStorage.getItem('embedease_ref');
   const { data, error } = await sb.auth.signUp({
     email    : signupData.email,
     password : signupData.pw,
@@ -1238,13 +1239,14 @@ async function completeSignup() {
         website_url   : signupData.url,
         industry      : signupData.industry,
         plan          : selectedPlan,
+        ref           : refCode || null,
       }
     }
   });
   setBtn('s3Btn','s3Sp','s3Txt', false);
   if(error) { showErr('s3Err', error.message); return; }
 
-  /* Update profile with extra data */
+  /* Update profile with user-entered details (referral attribution handled server-side) */
   if(data.user) {
     await sb.from('profiles').upsert({
       id            : data.user.id,
@@ -2245,8 +2247,7 @@ async function loadWhatsAppTab() {
   // 1. Check connected number
   try {
     const { data: numbers } = await sb
-      .from('wa_numbers')
-      .select('*')
+      .from('wa_numbers').select('id, phone_number_id, display_phone, waba_id, status, created_at, updated_at')
       .eq('user_id', currentUser.id)
       .order('created_at', { ascending: false })
       .limit(1);
@@ -2272,9 +2273,7 @@ async function loadWhatsAppTab() {
   // 2. Load Stats
   try {
     const { data: msgs } = await sb
-      .from('wa_messages')
-      .select('status, cost')
-      .eq('user_id', currentUser.id);
+      .from('wa_messages').select('status, cost, ts').eq('user_id', currentUser.id).order('ts', { ascending: false });
 
     let sent = 0, delivered = 0, read = 0, cost = 0;
     (msgs || []).forEach(m => {

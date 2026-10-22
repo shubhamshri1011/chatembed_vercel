@@ -290,33 +290,35 @@ CREATE POLICY "commissions_admin_all" ON public.commissions
 
 -- ── 11. Server-Side Referral Attribution Trigger ─────────────
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $
 DECLARE
   v_ref_code text;
   v_partner_id uuid;
   v_partner_user_id uuid;
 BEGIN
-  -- 1. Create Profile
+  -- Read ref code passed via options.data.ref (or fallback options.data.referred_by)
+  v_ref_code := TRIM(COALESCE(new.raw_user_meta_data->>'ref', new.raw_user_meta_data->>'referred_by', ''));
+
+  -- 1. Create or Update Profile
   INSERT INTO public.profiles (id, full_name, referred_by)
   VALUES (
     new.id,
     COALESCE(new.raw_user_meta_data->>'full_name', new.email),
-    new.raw_user_meta_data->>'referred_by'
+    NULLIF(v_ref_code, '')
   )
   ON CONFLICT (id) DO UPDATE SET
     full_name   = COALESCE(profiles.full_name, EXCLUDED.full_name),
-    referred_by = COALESCE(profiles.referred_by, EXCLUDED.referred_by);
+    referred_by = COALESCE(profiles.referred_by, NULLIF(v_ref_code, ''));
 
   -- 2. Referral attribution (blocks self-referral)
-  v_ref_code := TRIM(COALESCE(new.raw_user_meta_data->>'referred_by', ''));
   IF v_ref_code <> '' THEN
     SELECT id, user_id INTO v_partner_id, v_partner_user_id
     FROM public.partners
-    WHERE UPPER(referral_code) = UPPER(v_ref_code)
-       OR UPPER(COALESCE(ref_code, '')) = UPPER(v_ref_code)
+    WHERE UPPER(COALESCE(ref_code, referral_code, '')) = UPPER(v_ref_code)
+       OR UPPER(COALESCE(referral_code, ref_code, '')) = UPPER(v_ref_code)
     LIMIT 1;
 
-    -- Block self-referral
+    -- Enforce: partner cannot refer themselves
     IF v_partner_id IS NOT NULL AND v_partner_user_id <> new.id THEN
       INSERT INTO public.partner_clients (partner_id, client_id, client_user_id, referred_at)
       VALUES (v_partner_id, new.id, new.id, NOW())
@@ -326,7 +328,7 @@ BEGIN
 
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Ensure auth trigger is active
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
