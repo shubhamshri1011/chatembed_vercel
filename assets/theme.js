@@ -1,5 +1,5 @@
-/**
- * EmbedEase Unified Design System — theme.js
+﻿/**
+ * EmbedEase Unified Design System â€” theme.js
  * Injects consistent public navigation, footer, trademark & founder notices,
  * and initializes Lucide icons.
  */
@@ -201,4 +201,15 @@
   } else {
     window.EmbedEaseTheme.init();
   }
+
+  // Capture referral code if present in URL (?ref=CODE)
+  try {
+    var searchParams = new URLSearchParams(window.location.search);
+    var refCode = searchParams.get('ref') || searchParams.get('ref_code');
+    if (refCode) {
+      localStorage.setItem('embedease_ref', refCode.trim().toUpperCase());
+      sessionStorage.setItem('embedease_ref', refCode.trim().toUpperCase());
+    }
+  } catch(e) {}
 })();
+

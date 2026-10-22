@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -538,6 +538,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </button>
       <button class="nav-item" onclick="goPage('analytics',this)">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,11 5,7 8,9 11,5 15,3"/></svg>Bot Analytics
+      </button>      <div class="nav-sec">Growth</div>
+      <button class="nav-item" onclick="goPage('whatsapp',this)" id="nav-whatsapp">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.5 2.5A6.5 6.5 0 1 0 8 14.5c.9 0 1.8-.18 2.6-.5l2.9.9-.9-2.9c.32-.8.5-1.7.5-2.5z"/><path d="M5.5 7h5M5.5 9.5h3"/></svg>WhatsApp
+      </button>
+      <button class="nav-item" onclick="goPage('partners',this)" id="nav-partners">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="2.5"/><circle cx="11" cy="5" r="2.5"/><path d="M1 14c0-2.2 1.8-4 4-4M10 14c0-2.2 1.8-4 4-4M8 9.5v5"/></svg>Partners
+      </button>
+      <button class="nav-item" id="nav-admin" style="display:none" onclick="goPage('admin',this)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1L9.8 5.5H14.5L10.5 8.5L12 13L8 10L4 13L5.5 8.5L1.5 5.5H6.2Z"/></svg>Admin
       </button>
       <div class="nav-sec">Account</div>
       <button class="nav-item" onclick="goPage('settings',this)">
@@ -830,6 +839,178 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
 
     </div>
+
+      <!-- PAGE: WHATSAPP -->
+      <div class="page" id="page-whatsapp">
+        <div id="wa-setup-banner" style="background:rgba(14,107,77,0.08);border:1px solid rgba(14,107,77,0.2);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+          <div>
+            <div style="font-weight:600;font-size:.9rem">Connect WhatsApp Business API</div>
+            <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem">Enter your Meta phone_number_id and access token to enable campaigns.</div>
+          </div>
+          <button class="save-btn" style="white-space:nowrap;min-width:140px" onclick="document.getElementById('wa-connect-modal').style.display='flex'">Connect Number</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.25rem">
+          <div class="card"><div class="card-body" style="text-align:center">
+            <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700" id="wa-stat-sent">—</div>
+            <div style="font-size:.75rem;color:var(--muted)">Sent</div></div></div>
+          <div class="card"><div class="card-body" style="text-align:center">
+            <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--brand)" id="wa-stat-delivered">—</div>
+            <div style="font-size:.75rem;color:var(--muted)">Delivered</div></div></div>
+          <div class="card"><div class="card-body" style="text-align:center">
+            <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--brand2)" id="wa-stat-read">—</div>
+            <div style="font-size:.75rem;color:var(--muted)">Read</div></div></div>
+          <div class="card"><div class="card-body" style="text-align:center">
+            <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700" id="wa-stat-cost">₹0</div>
+            <div style="font-size:.75rem;color:var(--muted)">Total Spend (₹)</div></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Message Templates</div>
+              <button class="save-btn" style="padding:.4rem .85rem;font-size:.78rem" onclick="openWaTemplateModal()">+ New Template</button>
+            </div>
+            <div class="card-body" id="wa-templates-list" style="max-height:300px;overflow-y:auto">
+              <div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">No templates yet. Connect a number first.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Opted-In Contacts</div>
+              <button class="save-btn" style="padding:.4rem .85rem;font-size:.78rem" onclick="document.getElementById('wa-optin-modal').style.display='flex'">+ Add Contacts</button>
+            </div>
+            <div class="card-body" id="wa-optins-list" style="max-height:300px;overflow-y:auto">
+              <div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">No opted-in contacts</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Campaigns</div>
+            <button class="save-btn" onclick="openWaCampaignModal()">+ New Campaign</button>
+          </div>
+          <div class="card-body">
+            <table class="leads-table" style="width:100%">
+              <thead><tr><th>Name</th><th>Template</th><th>Status</th><th>Sent</th><th>Delivered</th><th>Read</th><th>Cost (₹)</th><th></th></tr></thead>
+              <tbody id="wa-campaigns-tbody">
+                <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">No campaigns yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: PARTNERS -->
+      <div class="page" id="page-partners">
+        <div id="partner-apply-section">
+          <div class="card" style="max-width:600px;margin:0 auto">
+            <div class="card-head"><div class="card-title">Become a Marketing Partner</div></div>
+            <div class="card-body">
+              <p style="margin-bottom:1rem;font-size:.88rem;color:var(--muted);line-height:1.6">Earn <strong style="color:var(--brand)">20% recurring monthly commission</strong> on every client you refer. White-label widgets, direct developer support, and your own referral link.</p>
+              <div id="partner-apply-err" class="err-msg"></div>
+              <div id="partner-apply-ok" class="ok-msg"></div>
+              <label class="f-label">Business / Agency Name *</label>
+              <input id="pa-business" class="f-input" placeholder="e.g. Sharma Digital Agency" style="margin-bottom:.75rem">
+              <label class="f-label">WhatsApp / Phone</label>
+              <input id="pa-phone" class="f-input" placeholder="+91 98XXXXXXXX" style="margin-bottom:.75rem">
+              <label class="f-label">Preferred Referral Code (optional)</label>
+              <input id="pa-refcode" class="f-input" placeholder="e.g. SHARMA20" style="margin-bottom:.75rem" maxlength="12">
+              <label class="f-label">Why do you want to partner?</label>
+              <textarea id="pa-message" class="f-input" rows="3" style="resize:vertical;margin-bottom:1rem" placeholder="Tell us about your network..."></textarea>
+              <button class="save-btn" id="pa-submit-btn" onclick="submitPartnerApplication()" style="width:100%">Apply for Partner Program</button>
+            </div>
+          </div>
+        </div>
+        <div id="partner-dashboard-section" style="display:none">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem">
+            <div class="card"><div class="card-body" style="text-align:center">
+              <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700" id="p-stat-clients">0</div>
+              <div style="font-size:.75rem;color:var(--muted)">Total Clients</div></div></div>
+            <div class="card"><div class="card-body" style="text-align:center">
+              <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--brand)" id="p-stat-pending">₹0</div>
+              <div style="font-size:.75rem;color:var(--muted)">Pending Commission</div></div></div>
+            <div class="card"><div class="card-body" style="text-align:center">
+              <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--brand2)" id="p-stat-paid">₹0</div>
+              <div style="font-size:.75rem;color:var(--muted)">Total Paid Out</div></div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
+            <div class="card">
+              <div class="card-head"><div class="card-title">Your Referral Link</div></div>
+              <div class="card-body">
+                <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.85rem;font-family:monospace;font-size:.82rem;word-break:break-all;margin-bottom:.75rem" id="p-ref-link">—</div>
+                <button class="save-btn" style="width:100%" onclick="copyRefLink()">Copy Link</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title">Partner Status</div></div>
+              <div class="card-body">
+                <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+                  <span id="p-status-dot" style="width:10px;height:10px;border-radius:50%;background:var(--brand2);display:inline-block"></span>
+                  <span id="p-status-text" style="font-weight:600">Pending Review</span>
+                </div>
+                <div style="font-size:.78rem;color:var(--muted)">Commission: <strong id="p-commission-pct">20%</strong> of client MRR</div>
+                <div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">Ref Code: <strong id="p-ref-code">—</strong></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Client Commissions</div></div>
+            <div class="card-body">
+              <table class="leads-table" style="width:100%">
+                <thead><tr><th>Client</th><th>Period</th><th>Subscription (₹)</th><th>Commission (₹)</th><th>Status</th></tr></thead>
+                <tbody id="p-commissions-tbody"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem">No commissions yet</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: ADMIN -->
+      <div class="page" id="page-admin">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.25rem">
+          <div class="card"><div class="card-body" style="text-align:center">
+            <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700" id="adm-users">—</div>
+            <div style="font-size:.75rem;color:var(--muted)">Total Users</div></div></div>
+          <div class="card"><div class="card-body" style="text-align:center">
+            <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--brand)" id="adm-bots">—</div>
+            <div style="font-size:.75rem;color:var(--muted)">Total Bots</div></div></div>
+          <div class="card"><div class="card-body" style="text-align:center">
+            <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--brand2)" id="adm-partners-count">—</div>
+            <div style="font-size:.75rem;color:var(--muted)">Partners</div></div></div>
+          <div class="card"><div class="card-body" style="text-align:center">
+            <div style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700" id="adm-mrr">₹—</div>
+            <div style="font-size:.75rem;color:var(--muted)">MRR (est.)</div></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
+          <div class="card">
+            <div class="card-head"><div class="card-title">Partner Applications</div>
+              <button class="save-btn" style="padding:.4rem .85rem;font-size:.78rem" onclick="loadAdminPartners()">Refresh</button>
+            </div>
+            <div class="card-body" id="adm-partners-list" style="max-height:340px;overflow-y:auto">
+              <div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Loading...</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">WhatsApp Rate Card (INR)</div>
+              <div style="font-size:.75rem;color:var(--muted)">Effective Jan 2026</div>
+            </div>
+            <div class="card-body" id="adm-rates-list">
+              <div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Loading...</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">All Users</div>
+            <input id="adm-user-search" class="f-input" placeholder="Search email..." style="max-width:220px;padding:.4rem .75rem;font-size:.8rem" oninput="filterAdminUsers()">
+          </div>
+          <div class="card-body">
+            <table class="leads-table" style="width:100%">
+              <thead><tr><th>Email</th><th>Plan</th><th>Bots</th><th>Usage</th><th>Joined</th><th>Is Admin</th></tr></thead>
+              <tbody id="adm-users-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
   </div>
 </div>
 
@@ -2050,6 +2231,676 @@ async function deleteBot(botId,botName) {
   showToast('Bot deleted');await loadBots();
 }
 
+﻿/* ============================================================
+   PHASE 4: WHATSAPP AUTOMATION & CAMPAIGNS
+   ============================================================ */
+
+let activeWaNumber = null;
+let waTemplatesList = [];
+let waOptInsCount = 0;
+
+async function loadWhatsAppTab() {
+  if (!currentUser) return;
+
+  // 1. Check connected number
+  try {
+    const { data: numbers } = await sb
+      .from('wa_numbers')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (numbers && numbers.length > 0) {
+      activeWaNumber = numbers[0];
+      const banner = document.getElementById('wa-setup-banner');
+      if (banner) {
+        banner.innerHTML = `
+          <div>
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block"></span>
+              <strong style="font-size:.92rem">WhatsApp Connected: ${activeWaNumber.display_phone}</strong>
+            </div>
+            <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem">Phone ID: ${activeWaNumber.phone_number_id} &bull; WABA ID: ${activeWaNumber.waba_id} &bull; Status: <span style="text-transform:capitalize;color:var(--brand)">${activeWaNumber.status}</span></div>
+          </div>
+          <button class="tb-btn" onclick="openWaConnectModal(true)">Configure / Edit</button>
+        `;
+      }
+    }
+  } catch(e) { console.warn('loadWaNumber:', e); }
+
+  // 2. Load Stats
+  try {
+    const { data: msgs } = await sb
+      .from('wa_messages')
+      .select('status, cost')
+      .eq('user_id', currentUser.id);
+
+    let sent = 0, delivered = 0, read = 0, cost = 0;
+    (msgs || []).forEach(m => {
+      sent++;
+      if (['delivered', 'read', 'replied'].includes(m.status)) delivered++;
+      if (['read', 'replied'].includes(m.status)) read++;
+      cost += Number(m.cost || 0);
+    });
+
+    document.getElementById('wa-stat-sent').textContent = sent.toLocaleString();
+    document.getElementById('wa-stat-delivered').textContent = delivered.toLocaleString();
+    document.getElementById('wa-stat-read').textContent = read.toLocaleString();
+    document.getElementById('wa-stat-cost').textContent = '₹' + cost.toFixed(2);
+  } catch(e) { console.warn('loadWaStats:', e); }
+
+  // 3. Load Templates
+  await loadWaTemplates();
+
+  // 4. Load Opt-ins
+  await loadWaOptins();
+
+  // 5. Load Campaigns
+  await loadWaCampaigns();
+}
+
+function openWaConnectModal(isEdit) {
+  if (isEdit && activeWaNumber) {
+    document.getElementById('wa-cfg-phone-id').value = activeWaNumber.phone_number_id || '';
+    document.getElementById('wa-cfg-waba-id').value = activeWaNumber.waba_id || '';
+    document.getElementById('wa-cfg-display-phone').value = activeWaNumber.display_phone || '';
+    document.getElementById('wa-cfg-token').value = activeWaNumber.access_token || '';
+  }
+  document.getElementById('wa-connect-modal').style.display = 'flex';
+}
+
+async function saveWhatsAppConfig() {
+  const phoneId = document.getElementById('wa-cfg-phone-id').value.trim();
+  const wabaId  = document.getElementById('wa-cfg-waba-id').value.trim();
+  const display = document.getElementById('wa-cfg-display-phone').value.trim();
+  const token   = document.getElementById('wa-cfg-token').value.trim();
+
+  if (!phoneId || !wabaId || !display || !token) {
+    showToast('Please fill all WhatsApp API fields', 'error');
+    return;
+  }
+
+  try {
+    if (activeWaNumber?.id) {
+      await sb.from('wa_numbers').update({
+        phone_number_id: phoneId,
+        waba_id: wabaId,
+        display_phone: display,
+        access_token: token,
+        status: 'active'
+      }).eq('id', activeWaNumber.id);
+    } else {
+      await sb.from('wa_numbers').insert({
+        user_id: currentUser.id,
+        phone_number_id: phoneId,
+        waba_id: wabaId,
+        display_phone: display,
+        access_token: token,
+        status: 'active'
+      });
+    }
+
+    document.getElementById('wa-connect-modal').style.display = 'none';
+    showToast('WhatsApp connected successfully!');
+    await loadWhatsAppTab();
+  } catch(e) {
+    showToast('Failed to save WhatsApp config: ' + e.message, 'error');
+  }
+}
+
+async function loadWaTemplates() {
+  const listEl = document.getElementById('wa-templates-list');
+  try {
+    const { data: tmpls } = await sb
+      .from('wa_templates')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false });
+
+    waTemplatesList = tmpls || [];
+    if (waTemplatesList.length === 0) {
+      listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">No templates created yet. Click "+ New Template".</div>';
+      return;
+    }
+
+    listEl.innerHTML = waTemplatesList.map(t => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem .5rem;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:600;font-size:.86rem">${t.name}</div>
+          <div style="font-size:.74rem;color:var(--muted)">${t.category} &bull; ${t.language}</div>
+        </div>
+        <span style="font-size:.72rem;padding:.2rem .5rem;border-radius:12px;background:rgba(14,107,77,0.12);color:var(--brand);font-weight:600">${t.status}</span>
+      </div>
+    `).join('');
+  } catch(e) { console.warn('loadWaTemplates:', e); }
+}
+
+function openWaTemplateModal() {
+  document.getElementById('wa-tmpl-name').value = '';
+  document.getElementById('wa-tmpl-body').value = '';
+  document.getElementById('wa-template-modal').style.display = 'flex';
+}
+function closeWaTemplateModal() {
+  document.getElementById('wa-template-modal').style.display = 'none';
+}
+
+async function saveWaTemplate() {
+  const rawName = document.getElementById('wa-tmpl-name').value.trim();
+  const name = rawName.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+  const cat  = document.getElementById('wa-tmpl-cat').value;
+  const lang = document.getElementById('wa-tmpl-lang').value;
+  const body = document.getElementById('wa-tmpl-body').value.trim();
+
+  if (!name || !body) {
+    showToast('Template name and body are required', 'error');
+    return;
+  }
+
+  try {
+    await sb.from('wa_templates').insert({
+      user_id: currentUser.id,
+      wa_number_id: activeWaNumber?.id || null,
+      name,
+      category: cat,
+      language: lang,
+      status: 'APPROVED',
+      components: [{ type: 'BODY', text: body }]
+    });
+
+    closeWaTemplateModal();
+    showToast('Template saved and ready!');
+    await loadWaTemplates();
+  } catch(e) {
+    showToast('Error saving template: ' + e.message, 'error');
+  }
+}
+
+async function loadWaOptins() {
+  const listEl = document.getElementById('wa-optins-list');
+  try {
+    const { data: optins, count } = await sb
+      .from('wa_opt_ins')
+      .select('*', { count: 'exact' })
+      .eq('user_id', currentUser.id)
+      .eq('status', 'opted_in')
+      .order('opted_in_at', { ascending: false });
+
+    waOptInsCount = count || (optins ? optins.length : 0);
+    if (!optins || optins.length === 0) {
+      listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">No opted-in contacts yet. Click "+ Add Contacts".</div>';
+      return;
+    }
+
+    listEl.innerHTML = optins.map(o => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem .5rem;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:600;font-size:.85rem;font-family:monospace">${o.phone}</div>
+          <div style="font-size:.72rem;color:var(--muted)">Source: ${o.source || 'Website'} &bull; ${new Date(o.opted_in_at).toLocaleDateString('en-IN')}</div>
+        </div>
+        <span style="font-size:.72rem;color:var(--brand)">✓ Opted in</span>
+      </div>
+    `).join('');
+  } catch(e) { console.warn('loadWaOptins:', e); }
+}
+
+function openWaOptinModal() {
+  document.getElementById('wa-opt-phones').value = '';
+  document.getElementById('wa-optin-modal').style.display = 'flex';
+}
+function closeWaOptinModal() {
+  document.getElementById('wa-optin-modal').style.display = 'none';
+}
+
+async function saveWaOptins() {
+  const source = document.getElementById('wa-opt-source').value;
+  const raw    = document.getElementById('wa-opt-phones').value;
+  if (!raw.trim()) { showToast('Please enter at least one phone number', 'error'); return; }
+
+  const lines = raw.split(/[\n,;]+/);
+  const rows = [];
+  lines.forEach(l => {
+    let cleaned = l.trim().replace(/[^\d+]/g, '');
+    if (!cleaned) return;
+    if (!cleaned.startsWith('+')) {
+      if (cleaned.length === 10) cleaned = '+91' + cleaned;
+      else cleaned = '+' + cleaned;
+    }
+    rows.push({
+      user_id: currentUser.id,
+      phone: cleaned,
+      status: 'opted_in',
+      source: source,
+      consent_text: 'User explicitly requested updates via ' + source
+    });
+  });
+
+  if (rows.length === 0) { showToast('No valid phone numbers found', 'error'); return; }
+
+  try {
+    await sb.from('wa_opt_ins').upsert(rows, { onConflict: 'user_id, phone' });
+    closeWaOptinModal();
+    showToast(`Added ${rows.length} contact(s) to WhatsApp opt-in list!`);
+    await loadWaOptins();
+  } catch(e) {
+    showToast('Failed to save contacts: ' + e.message, 'error');
+  }
+}
+
+async function loadWaCampaigns() {
+  const tbody = document.getElementById('wa-campaigns-tbody');
+  try {
+    const { data: camps } = await sb
+      .from('wa_campaigns')
+      .select('*, wa_templates(name)')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false });
+
+    if (!camps || camps.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">No campaigns created yet. Click "+ New Campaign" to broadcast.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = camps.map(c => `
+      <tr>
+        <td style="font-weight:600">${c.name}</td>
+        <td>${c.wa_templates?.name || '—'}</td>
+        <td><span style="font-size:.75rem;padding:.2rem .55rem;border-radius:10px;background:var(--surface2);font-weight:600;text-transform:capitalize">${c.status}</span></td>
+        <td>${c.sent_count || 0}</td>
+        <td>${c.delivered_count || 0}</td>
+        <td>${c.read_count || 0}</td>
+        <td>₹${Number(c.total_cost || 0).toFixed(2)}</td>
+        <td>
+          ${c.status === 'draft' ? `<button class="tb-btn" style="padding:.25rem .6rem;font-size:.75rem" onclick="triggerSendCampaign('${c.id}')">Send Now</button>` : ''}
+        </td>
+      </tr>
+    `).join('');
+  } catch(e) { console.warn('loadWaCampaigns:', e); }
+}
+
+function openWaCampaignModal() {
+  if (!activeWaNumber) {
+    showToast('Please connect your WhatsApp number first', 'error');
+    openWaConnectModal(false);
+    return;
+  }
+  const select = document.getElementById('wa-camp-template');
+  select.innerHTML = '<option value="">Select a template...</option>' +
+    waTemplatesList.map(t => `<option value="${t.id}">${t.name} (${t.category})</option>`).join('');
+
+  document.getElementById('wa-camp-recipient-count').textContent = waOptInsCount;
+  document.getElementById('wa-camp-name').value = '';
+  document.getElementById('wa-camp-var1').value = '';
+  document.getElementById('wa-camp-var2').value = '';
+  document.getElementById('wa-campaign-modal').style.display = 'flex';
+}
+function closeWaCampaignModal() {
+  document.getElementById('wa-campaign-modal').style.display = 'none';
+}
+
+async function submitWaCampaign() {
+  const name       = document.getElementById('wa-camp-name').value.trim();
+  const templateId = document.getElementById('wa-camp-template').value;
+  const var1       = document.getElementById('wa-camp-var1').value.trim();
+  const var2       = document.getElementById('wa-camp-var2').value.trim();
+
+  if (!name || !templateId) {
+    showToast('Please enter campaign name and choose a template', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('wa-camp-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Launching...';
+
+  try {
+    const { data: camp, error } = await sb.from('wa_campaigns').insert({
+      user_id: currentUser.id,
+      wa_number_id: activeWaNumber.id,
+      template_id: templateId,
+      name,
+      status: 'draft',
+      template_vars: { var1, var2 }
+    }).select().single();
+
+    if (error || !camp) throw error || new Error('Campaign creation failed');
+
+    closeWaCampaignModal();
+    showToast('Campaign created. Sending broadcast...');
+    await triggerSendCampaign(camp.id);
+  } catch(e) {
+    showToast('Error creating campaign: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Launch Campaign';
+  }
+}
+
+async function triggerSendCampaign(campaignId) {
+  try {
+    const session = (await sb.auth.getSession())?.data?.session;
+    const token   = session?.access_token || '';
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/wa-send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ campaign_id: campaignId })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Broadcast failed');
+
+    showToast(`Campaign broadcast complete! Total queued: ${data.total_queued || 0}`);
+    await loadWhatsAppTab();
+  } catch(e) {
+    showToast('Campaign send error: ' + e.message, 'error');
+    await loadWhatsAppTab();
+  }
+}
+
+/* ============================================================
+   PHASE 4: PARTNER & RESELLER PROGRAM
+   ============================================================ */
+
+let currentPartnerRecord = null;
+
+async function loadPartnersTab() {
+  if (!currentUser) return;
+
+  try {
+    const { data: partner } = await sb
+      .from('partners')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    if (!partner) {
+      document.getElementById('partner-apply-section').style.display = 'block';
+      document.getElementById('partner-dashboard-section').style.display = 'none';
+      return;
+    }
+
+    currentPartnerRecord = partner;
+    document.getElementById('partner-apply-section').style.display = 'none';
+    document.getElementById('partner-dashboard-section').style.display = 'block';
+
+    const refLink = `https://embedease.in/?ref=${partner.ref_code}`;
+    document.getElementById('p-ref-link').textContent = refLink;
+    document.getElementById('p-ref-code').textContent = partner.ref_code;
+    document.getElementById('p-commission-pct').textContent = partner.commission_pct + '%';
+
+    const statusDot  = document.getElementById('p-status-dot');
+    const statusText = document.getElementById('p-status-text');
+    statusText.textContent = partner.status.toUpperCase();
+    if (partner.status === 'active') {
+      statusDot.style.background = 'var(--brand)';
+    } else if (partner.status === 'suspended') {
+      statusDot.style.background = 'var(--red, #cf222e)';
+    } else {
+      statusDot.style.background = 'var(--brand2, #E0A526)';
+    }
+
+    // Load referred clients count
+    const { data: clients, count: clientCount } = await sb
+      .from('partner_clients')
+      .select('id', { count: 'exact' })
+      .eq('partner_id', partner.id);
+
+    document.getElementById('p-stat-clients').textContent = clientCount || (clients ? clients.length : 0);
+
+    // Load commissions
+    const { data: commissions } = await sb
+      .from('commissions')
+      .select('*')
+      .eq('partner_id', partner.id)
+      .order('created_at', { ascending: false });
+
+    let pending = 0, paid = 0;
+    const rows = (commissions || []).map(c => {
+      if (c.status === 'pending') pending += Number(c.commission_amount || 0);
+      if (c.status === 'paid') paid += Number(c.commission_amount || 0);
+      return `
+        <tr>
+          <td>${c.client_user_id.substring(0, 8)}...</td>
+          <td>${c.period_start ? `${c.period_start} to ${c.period_end}` : new Date(c.created_at).toLocaleDateString('en-IN')}</td>
+          <td>₹${Number(c.subscription_amount || 0).toLocaleString()}</td>
+          <td style="font-weight:700;color:var(--brand)">₹${Number(c.commission_amount || 0).toLocaleString()}</td>
+          <td><span style="font-size:.74rem;padding:.2rem .5rem;border-radius:10px;background:var(--surface2);text-transform:capitalize">${c.status}</span></td>
+        </tr>
+      `;
+    });
+
+    document.getElementById('p-stat-pending').textContent = '₹' + pending.toLocaleString();
+    document.getElementById('p-stat-paid').textContent = '₹' + paid.toLocaleString();
+
+    const tbody = document.getElementById('p-commissions-tbody');
+    if (rows.length > 0) tbody.innerHTML = rows.join('');
+    else tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem">No commissions recorded yet. Share your referral link to get started!</td></tr>';
+  } catch(e) {
+    console.warn('loadPartnersTab:', e);
+  }
+}
+
+async function submitPartnerApplication() {
+  const business = document.getElementById('pa-business').value.trim();
+  const phone    = document.getElementById('pa-phone').value.trim();
+  const refCode  = document.getElementById('pa-refcode').value.trim();
+  const message  = document.getElementById('pa-message').value.trim();
+
+  if (!business) {
+    showToast('Business / Agency Name is required', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('pa-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    const session = (await sb.auth.getSession())?.data?.session;
+    const token = session?.access_token || '';
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/partner-apply`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        business_name: business,
+        contact_phone: phone,
+        ref_code_requested: refCode,
+        message: message
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to submit application');
+
+    showToast('Application submitted! Pending review by our team.');
+    await loadPartnersTab();
+  } catch(e) {
+    showToast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Apply for Partner Program';
+  }
+}
+
+function copyRefLink() {
+  const link = document.getElementById('p-ref-link').textContent;
+  if (!link || link === '—') return;
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('Referral link copied to clipboard!');
+  }).catch(() => {
+    showToast('Link copied!');
+  });
+}
+
+/* ============================================================
+   PHASE 4: ADMIN CONSOLE
+   ============================================================ */
+
+let adminAllUsers = [];
+
+async function loadAdminTab() {
+  if (!currentProfile?.is_admin) {
+    showToast('Unauthorized: Admin access required', 'error');
+    goPage('overview', null);
+    return;
+  }
+
+  // 1. Overall platform stats
+  try {
+    const [{ count: userCount }, { count: botCount }, { count: partnerCount }] = await Promise.all([
+      sb.from('profiles').select('id', { count: 'exact', head: true }),
+      sb.from('bots').select('id', { count: 'exact', head: true }),
+      sb.from('partners').select('id', { count: 'exact', head: true })
+    ]);
+
+    document.getElementById('adm-users').textContent = userCount || 0;
+    document.getElementById('adm-bots').textContent  = botCount || 0;
+    document.getElementById('adm-partners-count').textContent = partnerCount || 0;
+  } catch(e) { console.warn('adminStats:', e); }
+
+  // 2. Load Partner applications
+  await loadAdminPartners();
+
+  // 3. Load WhatsApp rate card
+  await loadAdminRates();
+
+  // 4. Load platform users
+  await loadAdminUsers();
+}
+
+async function loadAdminPartners() {
+  const listEl = document.getElementById('adm-partners-list');
+  try {
+    const { data: partners, error } = await sb
+      .from('partners')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!partners || partners.length === 0) {
+      listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">No partner applications yet.</div>';
+      return;
+    }
+
+    listEl.innerHTML = partners.map(p => `
+      <div style="padding:.75rem;border:1px solid var(--border);border-radius:10px;margin-bottom:.6rem;background:var(--surface2)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <strong style="font-size:.9rem">${p.business_name}</strong>
+            <div style="font-size:.74rem;color:var(--muted)">Ref: <strong style="color:var(--brand)">${p.ref_code}</strong> &bull; Comm: ${p.commission_pct}% &bull; Phone: ${p.contact_phone || '—'}</div>
+          </div>
+          <span style="font-size:.72rem;padding:.2rem .5rem;border-radius:10px;background:var(--surface);font-weight:600;text-transform:uppercase">${p.status}</span>
+        </div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:.6rem">
+          ${p.status !== 'active' ? `<button class="tb-btn primary" style="padding:.25rem .6rem;font-size:.75rem" onclick="updatePartnerStatus('${p.id}', 'active')">Approve</button>` : ''}
+          ${p.status !== 'suspended' ? `<button class="tb-btn" style="padding:.25rem .6rem;font-size:.75rem" onclick="updatePartnerStatus('${p.id}', 'suspended')">Suspend</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    listEl.innerHTML = '<div style="color:var(--red);font-size:.8rem">Failed to load partners: ' + e.message + '</div>';
+  }
+}
+
+async function updatePartnerStatus(partnerId, newStatus) {
+  try {
+    await sb.from('partners').update({
+      status: newStatus,
+      approved_at: newStatus === 'active' ? new Date().toISOString() : null
+    }).eq('id', partnerId);
+
+    showToast(`Partner status updated to ${newStatus}`);
+    await loadAdminPartners();
+  } catch(e) {
+    showToast('Failed to update status: ' + e.message, 'error');
+  }
+}
+
+async function loadAdminRates() {
+  const listEl = document.getElementById('adm-rates-list');
+  try {
+    const { data: rates } = await sb.from('wa_rates').select('*').order('category');
+    if (!rates || rates.length === 0) {
+      listEl.innerHTML = '<div style="color:var(--muted);font-size:.85rem">No rate card configured</div>';
+      return;
+    }
+
+    listEl.innerHTML = rates.map(r => `
+      <div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.85rem">
+        <span style="text-transform:capitalize;font-weight:600">${r.category}</span>
+        <span>₹${Number(r.rate_inr).toFixed(2)} + ₹${Number(r.platform_fee_inr || 0.05).toFixed(2)} fee</span>
+      </div>
+    `).join('');
+  } catch(e) { console.warn('loadAdminRates:', e); }
+}
+
+async function loadAdminUsers() {
+  const tbody = document.getElementById('adm-users-tbody');
+  try {
+    const { data: profiles } = await sb
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    adminAllUsers = profiles || [];
+    renderAdminUsersList(adminAllUsers);
+
+    // Calculate approximate MRR
+    let mrr = 0;
+    adminAllUsers.forEach(u => {
+      if (u.plan === 'starter') mrr += 999;
+      else if (u.plan === 'growth') mrr += 2499;
+      else if (u.plan === 'agency') mrr += 4999;
+    });
+    document.getElementById('adm-mrr').textContent = '₹' + mrr.toLocaleString();
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--red);text-align:center">Error loading users: ' + e.message + '</td></tr>';
+  }
+}
+
+function renderAdminUsersList(users) {
+  const tbody = document.getElementById('adm-users-tbody');
+  if (!users || users.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No users found</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td style="font-weight:600">${u.full_name || '—'}<br><span style="font-size:.75rem;color:var(--muted);font-weight:400">${u.id.substring(0,8)}...</span></td>
+      <td><span style="font-size:.75rem;padding:.2rem .5rem;border-radius:10px;background:var(--surface2);text-transform:capitalize">${u.plan || 'Free'}</span></td>
+      <td>—</td>
+      <td>${u.convos_used || 0} / ${u.convos_limit || 100}</td>
+      <td style="font-size:.78rem">${u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—'}</td>
+      <td>
+        <span style="font-size:.75rem;padding:.2rem .5rem;border-radius:10px;background:${u.is_admin ? 'rgba(14,107,77,0.15)' : 'var(--surface2)'};color:${u.is_admin ? 'var(--brand)' : 'inherit'};font-weight:600">
+          ${u.is_admin ? 'Admin' : 'User'}
+        </span>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterAdminUsers() {
+  const q = document.getElementById('adm-user-search').value.toLowerCase().trim();
+  if (!q) { renderAdminUsersList(adminAllUsers); return; }
+  const filtered = adminAllUsers.filter(u => 
+    (u.full_name && u.full_name.toLowerCase().includes(q)) ||
+    (u.business_name && u.business_name.toLowerCase().includes(q)) ||
+    u.id.toLowerCase().includes(q)
+  );
+  renderAdminUsersList(filtered);
+}
+
+
 /* Boot */
 init();
 </script>
@@ -2304,6 +3155,151 @@ init();
       <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:.5rem">
         <button class="tb-btn" onclick="closeAdSpendModal()">Cancel</button>
         <button class="tb-btn primary" onclick="submitAdSpend()">Save Ad Spend</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+﻿<!-- WHATSAPP CONNECT MODAL -->
+<div class="e-modal" id="wa-connect-modal" style="display:none">
+  <div class="e-card" style="max-width:480px">
+    <div class="e-head">
+      <div class="e-title">Connect WhatsApp Business API</div>
+      <button class="e-close" onclick="document.getElementById('wa-connect-modal').style.display='none'">×</button>
+    </div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:1rem">
+      Configure your Meta Cloud API credentials. You can find these in the Meta for Developers App Dashboard.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.85rem">
+      <div class="s-field">
+        <label>Phone Number ID *</label>
+        <input type="text" id="wa-cfg-phone-id" placeholder="e.g. 109823482349823" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%">
+      </div>
+      <div class="s-field">
+        <label>WhatsApp Business Account ID (WABA ID) *</label>
+        <input type="text" id="wa-cfg-waba-id" placeholder="e.g. 104598234892342" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%">
+      </div>
+      <div class="s-field">
+        <label>Display Phone Number *</label>
+        <input type="text" id="wa-cfg-display-phone" placeholder="e.g. +91 98765 43210" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%">
+      </div>
+      <div class="s-field">
+        <label>Permanent System User Access Token *</label>
+        <input type="password" id="wa-cfg-token" placeholder="EAAG..." style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%">
+      </div>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:.5rem">
+        <button class="tb-btn" onclick="document.getElementById('wa-connect-modal').style.display='none'">Cancel</button>
+        <button class="tb-btn primary" onclick="saveWhatsAppConfig()">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP TEMPLATE MODAL -->
+<div class="e-modal" id="wa-template-modal" style="display:none">
+  <div class="e-card" style="max-width:520px">
+    <div class="e-head">
+      <div class="e-title">New WhatsApp Template</div>
+      <button class="e-close" onclick="closeWaTemplateModal()">×</button>
+    </div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:1rem">
+      Templates must be approved by Meta before broadcasting. Use {{1}}, {{2}} for dynamic tags.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.85rem">
+      <div class="s-field">
+        <label>Template Name (lowercase, underscores only) *</label>
+        <input type="text" id="wa-tmpl-name" placeholder="e.g. festive_offer_2026" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+        <div class="s-field">
+          <label>Category *</label>
+          <select id="wa-tmpl-cat" class="perf-select" style="width:100%">
+            <option value="MARKETING">Marketing (₹0.78 / conv)</option>
+            <option value="UTILITY">Utility (₹0.31 / conv)</option>
+            <option value="AUTHENTICATION">Authentication (₹0.14 / conv)</option>
+          </select>
+        </div>
+        <div class="s-field">
+          <label>Language *</label>
+          <select id="wa-tmpl-lang" class="perf-select" style="width:100%">
+            <option value="en">English (en)</option>
+            <option value="hi">Hindi (hi)</option>
+          </select>
+        </div>
+      </div>
+      <div class="s-field">
+        <label>Message Body *</label>
+        <textarea id="wa-tmpl-body" rows="4" placeholder="Hi {{1}}, get 20% off on your next purchase! Use code {{2}} at checkout." style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%;resize:vertical;font-family:inherit"></textarea>
+      </div>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:.5rem">
+        <button class="tb-btn" onclick="closeWaTemplateModal()">Cancel</button>
+        <button class="tb-btn primary" onclick="saveWaTemplate()">Save Template</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP OPT-IN CONTACTS MODAL -->
+<div class="e-modal" id="wa-optin-modal" style="display:none">
+  <div class="e-card" style="max-width:500px">
+    <div class="e-head">
+      <div class="e-title">Add Opted-In Contacts</div>
+      <button class="e-close" onclick="closeWaOptinModal()">×</button>
+    </div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:1rem">
+      Only message users who have provided explicit opt-in consent to receive WhatsApp messages from your business.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.85rem">
+      <div class="s-field">
+        <label>Source of Consent</label>
+        <select id="wa-opt-source" class="perf-select" style="width:100%">
+          <option value="Website Form">Website Form Checkbox</option>
+          <option value="Widget Chat">AI Chat Widget Lead</option>
+          <option value="In-Store / Direct">In-Store / Offline Customer</option>
+          <option value="Existing Customer">Existing Client / Customer</option>
+        </select>
+      </div>
+      <div class="s-field">
+        <label>Phone Numbers (one per line or comma-separated) *</label>
+        <textarea id="wa-opt-phones" rows="5" placeholder="+919876543210&#10;+919812345678&#10;9899887766" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%;resize:vertical;font-family:monospace"></textarea>
+      </div>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:.5rem">
+        <button class="tb-btn" onclick="closeWaOptinModal()">Cancel</button>
+        <button class="tb-btn primary" onclick="saveWaOptins()">Save Contacts</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP CAMPAIGN MODAL -->
+<div class="e-modal" id="wa-campaign-modal" style="display:none">
+  <div class="e-card" style="max-width:520px">
+    <div class="e-head">
+      <div class="e-title">Create WhatsApp Campaign</div>
+      <button class="e-close" onclick="closeWaCampaignModal()">×</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.85rem">
+      <div class="s-field">
+        <label>Campaign Name *</label>
+        <input type="text" id="wa-camp-name" placeholder="e.g. Flash_Sale_Oct2026" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%">
+      </div>
+      <div class="s-field">
+        <label>Choose Template *</label>
+        <select id="wa-camp-template" class="perf-select" style="width:100%">
+          <option value="">Select a template...</option>
+        </select>
+      </div>
+      <div class="s-field">
+        <label>Template Variables / Fallback Text</label>
+        <input type="text" id="wa-camp-var1" placeholder="Variable 1 (e.g. Valued Customer)" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%;margin-bottom:.5rem">
+        <input type="text" id="wa-camp-var2" placeholder="Variable 2 (e.g. DIWALI20)" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--text);width:100%">
+      </div>
+      <div style="background:var(--surface2);padding:.75rem;border-radius:8px;font-size:.78rem;color:var(--muted)">
+        Audience: Will be sent to all active opted-in contacts (<span id="wa-camp-recipient-count">0</span> contacts).
+      </div>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:.5rem">
+        <button class="tb-btn" onclick="closeWaCampaignModal()">Cancel</button>
+        <button class="tb-btn primary" id="wa-camp-submit-btn" onclick="submitWaCampaign()">Launch Campaign</button>
       </div>
     </div>
   </div>
