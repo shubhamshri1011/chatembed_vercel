@@ -698,6 +698,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <option value="hotstar">Hotstar Ads</option>
               <option value="whatsapp">WhatsApp</option>
             </select>
+            <button class="tb-btn" onclick="openCsvImportModal()">📥 Import CSV</button>
+            <button class="tb-btn" onclick="openAdsSyncModal()">⚡ Auto-Sync</button>
             <button class="tb-btn primary" onclick="openAdSpendModal()">+ Log Ad Spend</button>
           </div>
         </div>
@@ -2966,6 +2968,347 @@ function filterAdminUsers() {
 }
 
 
+
+/* ============================================================
+   PHASE 5: CSV IMPORT & ADS API SYNC
+   ============================================================ */
+
+let parsedCsvHeaders = [];
+let parsedCsvRows    = [];
+
+function openCsvImportModal() {
+  document.getElementById('csv-file-input').value = '';
+  document.getElementById('csv-mapping-box').style.display = 'none';
+  document.getElementById('csv-preview-box').style.display = 'none';
+  document.getElementById('csv-import-btn').style.display = 'none';
+  document.getElementById('csvImportModal').style.display = 'flex';
+}
+
+function closeCsvImportModal() {
+  document.getElementById('csvImportModal').style.display = 'none';
+  parsedCsvHeaders = [];
+  parsedCsvRows = [];
+}
+
+function handleCsvFileSelected(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const text = evt.target.result;
+    parseCsvText(text);
+  };
+  reader.readAsText(file);
+}
+
+function parseCsvText(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length < 2) {
+    showToast('CSV must contain a header row and data rows', 'error');
+    return;
+  }
+
+  // Parse CSV line handling quotes
+  function parseLine(line) {
+    const result = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') inQuotes = !inQuotes;
+      else if (c === ',' && !inQuotes) {
+        result.push(cur.trim());
+        cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+
+  parsedCsvHeaders = parseLine(lines[0]);
+  parsedCsvRows = lines.slice(1).map(l => parseLine(l)).filter(r => r.length === parsedCsvHeaders.length);
+
+  setupCsvColumnMappers();
+  generateCsvPreview();
+}
+
+function setupCsvColumnMappers() {
+  const selects = ['map-campaign', 'map-date', 'map-spend', 'map-imp', 'map-clicks'];
+  selects.forEach(id => {
+    const el = document.getElementById(id);
+    el.innerHTML = '<option value="-1">-- Not mapped --</option>' +
+      parsedCsvHeaders.map((h, i) => `<option value="${i}">${h}</option>`).join('');
+  });
+
+  // Auto-detect standard column names for Meta & Google Ads
+  parsedCsvHeaders.forEach((h, idx) => {
+    const lower = h.toLowerCase();
+    if (/campaign|campaign\s*name|ad\s*group/i.test(lower)) {
+      document.getElementById('map-campaign').value = idx;
+    }
+    if (/day|date|reporting\s*starts|day\s*of/i.test(lower)) {
+      document.getElementById('map-date').value = idx;
+    }
+    if (/amount\s*spent|spend|cost/i.test(lower)) {
+      document.getElementById('map-spend').value = idx;
+    }
+    if (/impressions|impr/i.test(lower)) {
+      document.getElementById('map-imp').value = idx;
+    }
+    if (/clicks|link\s*clicks/i.test(lower)) {
+      document.getElementById('map-clicks').value = idx;
+    }
+  });
+
+  document.getElementById('csv-mapping-box').style.display = 'block';
+}
+
+function generateCsvPreview() {
+  const campIdx  = parseInt(document.getElementById('map-campaign').value);
+  const dateIdx  = parseInt(document.getElementById('map-date').value);
+  const spendIdx = parseInt(document.getElementById('map-spend').value);
+  const impIdx   = parseInt(document.getElementById('map-imp').value);
+  const clickIdx = parseInt(document.getElementById('map-clicks').value);
+
+  if (campIdx < 0 || dateIdx < 0 || spendIdx < 0) {
+    document.getElementById('csv-preview-box').style.display = 'none';
+    document.getElementById('csv-import-btn').style.display = 'none';
+    return;
+  }
+
+  let totalSpend = 0;
+  const previewRows = [];
+
+  parsedCsvRows.forEach((row, i) => {
+    const camp  = row[campIdx] || 'Unnamed Campaign';
+    let dateRaw = row[dateIdx] || '';
+    let spendRaw = parseFloat((row[spendIdx] || '0').replace(/[^0-9.]/g, '')) || 0;
+    let impRaw   = impIdx >= 0 ? parseInt(row[impIdx] || '0') || 0 : 0;
+    let clickRaw = clickIdx >= 0 ? parseInt(row[clickIdx] || '0') || 0 : 0;
+
+    // Standardize date to YYYY-MM-DD
+    let d = new Date(dateRaw);
+    let dateStr = !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : dateRaw;
+
+    totalSpend += spendRaw;
+
+    if (i < 10) {
+      previewRows.push(`
+        <tr>
+          <td>${dateStr}</td>
+          <td style="font-weight:600">${camp}</td>
+          <td>₹${spendRaw.toFixed(2)}</td>
+          <td>${impRaw.toLocaleString()}</td>
+          <td>${clickRaw.toLocaleString()}</td>
+        </tr>
+      `);
+    }
+  });
+
+  document.getElementById('csv-preview-tbody').innerHTML = previewRows.join('');
+  document.getElementById('csv-preview-count').textContent = parsedCsvRows.length;
+  document.getElementById('csv-preview-total').textContent = '₹' + totalSpend.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  document.getElementById('csv-preview-box').style.display = 'block';
+  document.getElementById('csv-import-btn').style.display = 'inline-block';
+}
+
+async function confirmAndSaveCsvImport() {
+  const channel = document.getElementById('csv-channel').value;
+  const campIdx  = parseInt(document.getElementById('map-campaign').value);
+  const dateIdx  = parseInt(document.getElementById('map-date').value);
+  const spendIdx = parseInt(document.getElementById('map-spend').value);
+  const impIdx   = parseInt(document.getElementById('map-imp').value);
+  const clickIdx = parseInt(document.getElementById('map-clicks').value);
+
+  const btn = document.getElementById('csv-import-btn');
+  btn.disabled = true;
+  btn.textContent = 'Importing...';
+
+  try {
+    let imported = 0;
+    const campaignMap = {}; // name -> id
+
+    for (const row of parsedCsvRows) {
+      const campName = (row[campIdx] || 'Unnamed Campaign').trim();
+      let dateRaw    = row[dateIdx] || '';
+      let spendVal   = parseFloat((row[spendIdx] || '0').replace(/[^0-9.]/g, '')) || 0;
+      let impVal     = impIdx >= 0 ? parseInt(row[impIdx] || '0') || 0 : 0;
+      let clickVal   = clickIdx >= 0 ? parseInt(row[clickIdx] || '0') || 0 : 0;
+
+      let d = new Date(dateRaw);
+      let dateStr = !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : dateRaw;
+      if (!dateStr || dateStr.length !== 10) continue;
+
+      // 1. Get or create campaign
+      let campId = campaignMap[campName];
+      if (!campId) {
+        const { data: cRow } = await sb
+          .from('campaigns')
+          .upsert({
+            user_id: currentUser.id,
+            channel: channel,
+            name: campName,
+            status: 'active'
+          }, { onConflict: 'user_id,channel,name' })
+          .select('id')
+          .single();
+        if (cRow) {
+          campId = cRow.id;
+          campaignMap[campName] = campId;
+        }
+      }
+
+      if (campId) {
+        // 2. Upsert ad_spend row (deduping on campaign_id, date)
+        await sb
+          .from('ad_spend')
+          .upsert({
+            campaign_id: campId,
+            user_id: currentUser.id,
+            date: dateStr,
+            spend: spendVal,
+            impressions: impVal,
+            clicks: clickVal,
+            source: 'csv'
+          }, { onConflict: 'campaign_id,date' });
+        imported++;
+      }
+    }
+
+    closeCsvImportModal();
+    showToast(`Imported ${imported} ad spend rows successfully!`);
+    await loadAdSpend();
+  } catch(e) {
+    showToast('CSV Import Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Confirm & Import Ad Spend';
+  }
+}
+
+// ── Ads Auto-Sync Modal ──
+function openAdsSyncModal() {
+  switchAdsSyncTab('accounts');
+  document.getElementById('adsSyncModal').style.display = 'flex';
+  loadConnectedAdAccounts();
+}
+
+function closeAdsSyncModal() {
+  document.getElementById('adsSyncModal').style.display = 'none';
+}
+
+function switchAdsSyncTab(tab) {
+  if (tab === 'accounts') {
+    document.getElementById('panel-sync-accounts').style.display = 'block';
+    document.getElementById('panel-sync-connect').style.display = 'none';
+    document.getElementById('tab-btn-sync-accounts').classList.add('active');
+    document.getElementById('tab-btn-sync-connect').classList.remove('active');
+  } else {
+    document.getElementById('panel-sync-accounts').style.display = 'none';
+    document.getElementById('panel-sync-connect').style.display = 'flex';
+    document.getElementById('tab-btn-sync-accounts').classList.remove('active');
+    document.getElementById('tab-btn-sync-connect').classList.add('active');
+  }
+}
+
+async function loadConnectedAdAccounts() {
+  const listEl = document.getElementById('ads-accounts-list');
+  try {
+    const { data: accounts } = await sb
+      .from('ad_accounts')
+      .select('id, platform, account_id, account_name, status, last_synced_at, created_at')
+      .eq('user_id', currentUser.id);
+
+    if (!accounts || accounts.length === 0) {
+      listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">No ad accounts connected yet. Click "+ Connect New Account".</div>';
+      return;
+    }
+
+    listEl.innerHTML = accounts.map(a => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem;border:1px solid var(--border);border-radius:10px;margin-bottom:.6rem;background:var(--surface2)">
+        <div>
+          <div style="font-weight:600;font-size:.9rem">${a.account_name}</div>
+          <div style="font-size:.74rem;color:var(--muted)">${a.platform.toUpperCase()} &bull; ID: ${a.account_id} &bull; Last Synced: ${a.last_synced_at ? new Date(a.last_synced_at).toLocaleString('en-IN') : 'Never'}</div>
+        </div>
+        <span style="font-size:.72rem;padding:.2rem .5rem;border-radius:10px;background:rgba(14,107,77,0.15);color:var(--brand);font-weight:600">${a.status.toUpperCase()}</span>
+      </div>
+    `).join('');
+  } catch(e) {
+    listEl.innerHTML = '<div style="color:var(--red);font-size:.8rem">Failed to load ad accounts: ' + e.message + '</div>';
+  }
+}
+
+async function submitMetaAdsConnect() {
+  const actId   = document.getElementById('meta-sync-act-id').value.trim();
+  const actName = document.getElementById('meta-sync-act-name').value.trim();
+  const token   = document.getElementById('meta-sync-token').value.trim();
+
+  if (!actId || !token) {
+    showToast('Ad Account ID and Permanent Token are required', 'error');
+    return;
+  }
+
+  try {
+    const session = (await sb.auth.getSession())?.data?.session;
+    const jwt = session?.access_token || '';
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/ads-connect`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      },
+      body: JSON.stringify({
+        platform: 'meta',
+        account_id: actId,
+        account_name: actName,
+        access_token: token
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Connection failed');
+
+    document.getElementById('meta-sync-act-id').value = '';
+    document.getElementById('meta-sync-token').value = '';
+    showToast(data.message || 'Meta Ad Account connected!');
+    switchAdsSyncTab('accounts');
+    await loadConnectedAdAccounts();
+  } catch(e) {
+    showToast(e.message, 'error');
+  }
+}
+
+async function triggerManualAdsSync() {
+  try {
+    showToast('Syncing daily ad spend from Meta...');
+    const session = (await sb.auth.getSession())?.data?.session;
+    const jwt = session?.access_token || '';
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/ads-sync`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      }
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Sync failed');
+
+    showToast(`Synced ${data.total_synced_rows || 0} daily spend records from connected accounts!`);
+    await loadConnectedAdAccounts();
+    await loadAdSpend();
+  } catch(e) {
+    showToast('Sync error: ' + e.message, 'error');
+  }
+}
+
+
 /* Boot */
 init();
 </script>
@@ -3366,6 +3709,139 @@ init();
         <button class="tb-btn" onclick="closeWaCampaignModal()">Cancel</button>
         <button class="tb-btn primary" id="wa-camp-submit-btn" onclick="submitWaCampaign()">Launch Campaign</button>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CSV IMPORT MODAL (Meta & Google Ads) -->
+<div class="e-modal" id="csvImportModal" style="display:none">
+  <div class="e-card" style="max-width:680px;max-height:90vh;overflow-y:auto">
+    <div class="e-head">
+      <div class="e-title">Import Ad Spend Report (CSV)</div>
+      <button class="e-close" onclick="closeCsvImportModal()">×</button>
+    </div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:1rem">
+      Upload daily campaign export CSVs from <strong>Meta Ads Manager</strong> or <strong>Google Ads</strong>. Entries for the same campaign and date will be automatically deduped.
+    </div>
+
+    <div id="csv-step-upload" style="display:flex;flex-direction:column;gap:1rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+        <div class="s-field">
+          <label>Ad Channel *</label>
+          <select id="csv-channel" class="perf-select" style="width:100%" onchange="autoDetectCsvFormat()">
+            <option value="meta">Meta Ads (Facebook / Instagram)</option>
+            <option value="google_ads">Google Ads (Search / Display)</option>
+          </select>
+        </div>
+        <div class="s-field">
+          <label>Select CSV File *</label>
+          <input type="file" id="csv-file-input" accept=".csv" class="f-input" onchange="handleCsvFileSelected(event)" style="padding:.45rem;width:100%">
+        </div>
+      </div>
+
+      <!-- Mapping options (auto-detected, expandable) -->
+      <div id="csv-mapping-box" style="display:none;background:var(--surface2);padding:1rem;border-radius:10px;border:1px solid var(--border)">
+        <div style="font-weight:600;font-size:.86rem;margin-bottom:.6rem">Column Mapping</div>
+        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:.6rem">
+          <div><label class="f-label">Campaign Name</label><select id="map-campaign" class="perf-select" style="width:100%" onchange="generateCsvPreview()"></select></div>
+          <div><label class="f-label">Date (Day)</label><select id="map-date" class="perf-select" style="width:100%" onchange="generateCsvPreview()"></select></div>
+          <div><label class="f-label">Spend (INR)</label><select id="map-spend" class="perf-select" style="width:100%" onchange="generateCsvPreview()"></select></div>
+          <div><label class="f-label">Impressions</label><select id="map-imp" class="perf-select" style="width:100%" onchange="generateCsvPreview()"></select></div>
+          <div><label class="f-label">Clicks</label><select id="map-clicks" class="perf-select" style="width:100%" onchange="generateCsvPreview()"></select></div>
+        </div>
+      </div>
+
+      <!-- Preview Box -->
+      <div id="csv-preview-box" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+          <div style="font-weight:600;font-size:.86rem">Preview Before Save (<span id="csv-preview-count">0</span> rows)</div>
+          <div style="font-size:.82rem;color:var(--brand)">Total Spend: <strong id="csv-preview-total">₹0</strong></div>
+        </div>
+        <div style="max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:8px">
+          <table class="leads-table" style="width:100%;font-size:.78rem">
+            <thead><tr><th>Date</th><th>Campaign</th><th>Spend (₹)</th><th>Impressions</th><th>Clicks</th></tr></thead>
+            <tbody id="csv-preview-tbody"></tbody>
+          </table>
+        </div>
+        <div style="font-size:.74rem;color:var(--muted);margin-top:.4rem">
+          ℹ Deduplication: If a spend entry already exists for a campaign on a given date, it will be updated without duplicates.
+        </div>
+      </div>
+
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:.5rem">
+        <button class="tb-btn" onclick="closeCsvImportModal()">Cancel</button>
+        <button class="tb-btn primary" id="csv-import-btn" style="display:none" onclick="confirmAndSaveCsvImport()">Confirm & Import Ad Spend</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTO-SYNC ADS MODAL (Meta & Google Ads) -->
+<div class="e-modal" id="adsSyncModal" style="display:none">
+  <div class="e-card" style="max-width:540px">
+    <div class="e-head">
+      <div class="e-title">Ad Account Auto-Sync (API)</div>
+      <button class="e-close" onclick="closeAdsSyncModal()">×</button>
+    </div>
+    
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:.5rem">
+      <button class="tb-btn" id="tab-btn-sync-accounts" onclick="switchAdsSyncTab('accounts')">Connected Accounts</button>
+      <button class="tb-btn" id="tab-btn-sync-connect" onclick="switchAdsSyncTab('connect')">+ Connect New Account</button>
+    </div>
+
+    <div id="panel-sync-accounts">
+      <div id="ads-accounts-list" style="margin-bottom:1rem">
+        <div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Loading connected accounts...</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface2);padding:.75rem 1rem;border-radius:10px">
+        <div style="font-size:.78rem;color:var(--muted)">Scheduled: Daily automated sync runs every morning at 06:00 IST</div>
+        <button class="save-btn" style="font-size:.78rem;padding:.4rem .85rem" onclick="triggerManualAdsSync()">⚡ Sync Now</button>
+      </div>
+    </div>
+
+    <div id="panel-sync-connect" style="display:none;flex-direction:column;gap:.9rem">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+          <strong style="font-size:.9rem">Meta Marketing API (ads_read)</strong>
+          <span style="font-size:.7rem;padding:1px 6px;border-radius:4px;background:rgba(14,107,77,0.15);color:var(--brand)">Active</span>
+        </div>
+        <div style="font-size:.76rem;color:var(--muted);margin-bottom:.75rem">
+          Read-only sync for your own Meta Ad Account. Credentials are stored server-side only and never exposed to the browser.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div>
+            <label class="f-label">Meta Ad Account ID *</label>
+            <input type="text" id="meta-sync-act-id" placeholder="e.g. act_1234567890" class="f-input" style="width:100%">
+          </div>
+          <div>
+            <label class="f-label">Account Label (optional)</label>
+            <input type="text" id="meta-sync-act-name" placeholder="e.g. Primary Meta Ads Account" class="f-input" style="width:100%">
+          </div>
+          <div>
+            <label class="f-label">System User / Permanent Access Token *</label>
+            <input type="password" id="meta-sync-token" placeholder="EAAG..." class="f-input" style="width:100%">
+          </div>
+          <button class="save-btn" onclick="submitMetaAdsConnect()" style="width:100%;margin-top:.4rem">Connect Meta Ad Account</button>
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;opacity:0.9">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+          <strong style="font-size:.9rem">Google Ads API Sync</strong>
+          <span style="font-size:.7rem;padding:2px 6px;border-radius:4px;background:var(--surface);border:1px solid var(--border);color:var(--brand2);font-weight:600">Developer Token Pending</span>
+        </div>
+        <div style="font-size:.76rem;color:var(--muted);margin-bottom:.5rem">
+          Google Ads API integration scaffolding is complete. Live auto-sync will activate as soon as Google approves the developer token.
+        </div>
+        <div style="font-size:.76rem;color:var(--brand)">
+          👉 Please use <strong>Import CSV</strong> in the Performance tab to upload Google Ads daily reports.
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:1rem">
+      <button class="tb-btn" onclick="closeAdsSyncModal()">Close</button>
     </div>
   </div>
 </div>
